@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Xuất thông báo nhập học - KIYOKAWA CRM</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+</head>
+<body class="bg-gray-50">
+
+<div class="flex-1 p-8 overflow-auto">
+
+    <!-- Header -->
+    <div class="flex items-center gap-4 mb-10">
+      <button onclick="history.back()" class="text-gray-500 hover:text-gray-700 p-2">
+        <i class="fas fa-arrow-left text-3xl"></i>
+      </button>
+      <div>
+        <h1 class="text-4xl font-semibold">Xuất thông báo nhập học</h1>
+        <p class="text-gray-500 mt-1">Điền thông tin để xuất file PDF thông báo nhập học</p>
+      </div>
+    </div>
+
+      <div class="grid grid-cols-2 gap-6">
+        <div>
+          <label class="block text-sm font-medium mb-2">Ngày bắt đầu <span class="text-red-500">*</span></label>
+          <input type="date" id="startDate" class="w-full border border-gray-300 rounded-2xl px-5 py-4">
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-2">Ngày kết thúc <span class="text-red-500">*</span></label>
+          <input type="date" id="endDate" class="w-full border border-gray-300 rounded-2xl px-5 py-4">
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium mb-2">Địa chỉ nhận thông báo</label>
+        <textarea id="address" rows="3" class="w-full border border-gray-300 rounded-2xl px-5 py-4" placeholder="Số nhà, đường, phường, quận..."></textarea>
+      </div>
+    </div>
+
+    <div class="mt-10 flex gap-4">
+      <button onclick="history.back()" class="flex-1 py-4 border border-gray-300 rounded-2xl font-medium">Hủy</button>
+      <button onclick="exportPDF()" 
+              class="flex-1 py-4 bg-purple-600 text-white rounded-2xl font-medium flex items-center justify-center gap-2">
+        <i class="fas fa-file-pdf"></i>
+        Xuất PDF
+      </button>
+    </div>
+  </div>
+
+  <script>
+    function exportPDF() {
+      alert("✅ Đã xuất file PDF thông báo nhập học thành công!\n\n(Tên file: Thong-bao-nhap-hoc_Nguyen-Thi-Lan-Anh.pdf)");
+      // Trong thực tế sẽ gọi API xuất PDF
+    }
+  </script>
+</body>
+</html>

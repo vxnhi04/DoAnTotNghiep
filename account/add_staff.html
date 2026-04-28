@@ -1,0 +1,115 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thêm Nhân viên / CTV - KIYOKAWA CRM</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+</head>
+<body class="bg-gray-50 p-8">
+
+  <div class="max-w-screen-2xl mx-auto">
+    <div class="flex items-center gap-4 mb-8">
+      <button onclick="history.back()" class="text-gray-500 hover:text-gray-700">
+        <i class="fas fa-arrow-left text-2xl"></i>
+      </button>
+      <div>
+        <h1 class="text-3xl font-semibold">Thêm Nhân viên / CTV</h1>
+        <p class="text-gray-500">Tạo tài khoản mới cho nhân viên hoặc cộng tác viên</p>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-3xl shadow-sm p-10">
+
+      <div class="grid grid-cols-2 gap-8">
+        <!-- Thông tin cá nhân -->
+        <div class="col-span-2">
+          <h2 class="font-semibold text-lg mb-6 border-b pb-4">Thông tin cá nhân</h2>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Họ <span class="text-red-500">*</span></label>
+          <input type="text" placeholder="Nguyễn" 
+                 class="w-full border border-gray-300 rounded-2xl px-5 py-4 focus:outline-none focus:border-purple-500">
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Tên <span class="text-red-500">*</span></label>
+          <input type="text" placeholder="Quang Hưng" 
+                 class="w-full border border-gray-300 rounded-2xl px-5 py-4 focus:outline-none focus:border-purple-500">
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Email <span class="text-red-500">*</span></label>
+          <input type="email" placeholder="example@kiyokawa.vn" 
+                 class="w-full border border-gray-300 rounded-2xl px-5 py-4 focus:outline-none focus:border-purple-500">
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Số điện thoại</label>
+          <input type="tel" placeholder="0987 654 321" 
+                 class="w-full border border-gray-300 rounded-2xl px-5 py-4 focus:outline-none focus:border-purple-500">
+        </div>
+
+        <div class="col-span-2">
+          <label class="block text-sm font-medium text-gray-700 mb-2">Địa chỉ</label>
+          <textarea rows="2" placeholder="Nhập địa chỉ hiện tại..." 
+                    class="w-full border border-gray-300 rounded-2xl px-5 py-4 focus:outline-none focus:border-purple-500"></textarea>
+        </div>
+      </div>
+
+      <!-- Phân quyền -->
+      <div class="mt-12">
+        <h2 class="font-semibold text-lg mb-6 border-b pb-4">Phân quyền & Trạng thái</h2>
+        
+        <div class="grid grid-cols-2 gap-8">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Vai trò <span class="text-red-500">*</span></label>
+            <select class="w-full border border-gray-300 rounded-2xl px-5 py-4 focus:outline-none focus:border-purple-500">
+              <option value="">Chọn vai trò</option>
+              <option value="admin">Admin (Quản trị viên)</option>
+              <option value="staff" selected>Staff (Nhân viên)</option>
+              <option value="ctv">CTV (Cộng tác viên)</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Trạng thái tài khoản</label>
+            <div class="flex items-center gap-4 mt-3">
+              <label class="flex items-center gap-2 cursor-pointer">
+                <input type="radio" name="status" checked class="accent-purple-600">
+                <span class="text-emerald-600 font-medium">Kích hoạt</span>
+              </label>
+              <label class="flex items-center gap-2 cursor-pointer">
+                <input type="radio" name="status" class="accent-purple-600">
+                <span class="text-gray-500">Tạm khóa</span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Buttons -->
+      <div class="flex justify-end gap-4 mt-16">
+        <button onclick="history.back()" 
+                class="px-8 py-4 border border-gray-300 rounded-2xl hover:bg-gray-50 transition">
+          Hủy
+        </button>
+        
+        <button onclick="alert('Tài khoản đã được tạo thành công!')" 
+                class="px-8 py-4 bg-white border border-purple-600 text-purple-600 rounded-2xl hover:bg-purple-50 transition">
+          Lưu &amp; Tiếp tục thêm
+        </button>
+
+        <button onclick="alert('Tài khoản nhân viên/CTV đã được tạo thành công!')" 
+                class="px-10 py-4 bg-purple-600 text-white rounded-2xl hover:bg-purple-700 transition">
+          Lưu thông tin
+        </button>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

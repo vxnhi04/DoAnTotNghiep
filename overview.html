@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tổng quan - KIYOKAWA CRM</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+</head>
+<body class="bg-gray-50">
+
+<div class="max-w-screen-2xl mx-auto p-8">
+
+  <!-- Header -->
+  <div class="flex justify-between items-center mb-10">
+    <div>
+      <h1 class="text-3xl font-semibold">Tổng quan</h1>
+      <p class="text-gray-500">Toàn hệ thống - Quản lý ứng viên và nhân viên</p>
+    </div>
+  </div>
+
+  <!-- 8 KPI Cards (giữ nguyên) -->
+  <div class="grid grid-cols-4 gap-6 mb-12">
+    <div class="bg-white rounded-3xl p-6 shadow-sm hover:shadow transition">
+      <div class="flex items-center justify-between">
+        <div>
+          <div class="text-4xl font-bold text-blue-600">1,946</div>
+          <div class="text-sm text-gray-600 mt-1">Tổng ứng viên</div>
+        </div>
+        <div class="w-12 h-12 bg-blue-100 rounded-2xl flex items-center justify-center text-3xl">👥</div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-3xl p-6 shadow-sm hover:shadow transition">
+      <div class="flex items-center justify-between">
+        <div>
+          <div class="text-4xl font-bold text-cyan-600">420</div>
+          <div class="text-sm text-gray-600 mt-1">Mới hôm nay</div>
+        </div>
+        <div class="w-12 h-12 bg-cyan-100 rounded-2xl flex items-center justify-center text-3xl">🆕</div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-3xl p-6 shadow-sm hover:shadow transition">
+      <div class="flex items-center justify-between">
+        <div>
+          <div class="text-4xl font-bold text-emerald-600">1,089</div>
+          <div class="text-sm text-gray-600 mt-1">Đã phân công</div>
+        </div>
+        <div class="w-12 h-12 bg-emerald-100 rounded-2xl flex items-center justify-center text-3xl">✅</div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-3xl p-6 shadow-sm hover:shadow transition">
+      <div class="flex items-center justify-between">
+        <div>
+          <div class="text-4xl font-bold text-red-600">478</div>
+          <div class="text-sm text-gray-600 mt-1">Chưa phân công</div>
+        </div>
+        <div class="w-12 h-12 bg-red-100 rounded-2xl flex items-center justify-center text-3xl">⏳</div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-3xl p-6 shadow-sm hover:shadow transition">
+      <div class="flex items-center justify-between">
+        <div>
+          <div class="text-4xl font-bold text-emerald-600">680</div>
+          <div class="text-sm text-gray-600 mt-1">Đã liên hệ</div>
+        </div>
+        <div class="w-12 h-12 bg-emerald-100 rounded-2xl flex items-center justify-center text-3xl">📞</div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-3xl p-6 shadow-sm hover:shadow transition">
+      <div class="flex items-center justify-between">
+        <div>
+          <div class="text-4xl font-bold text-red-600">1,266</div>
+          <div class="text-sm text-gray-600 mt-1">Chưa liên hệ</div>
+        </div>
+        <div class="w-12 h-12 bg-red-100 rounded-2xl flex items-center justify-center text-3xl">📵</div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-3xl p-6 shadow-sm hover:shadow transition">
+      <div class="flex items-center justify-between">
+        <div>
+          <div class="text-4xl font-bold text-amber-600">312</div>
+          <div class="text-sm text-gray-600 mt-1">Quá 7 ngày chưa LH</div>
+        </div>
+        <div class="w-12 h-12 bg-amber-100 rounded-2xl flex items-center justify-center text-3xl">⚠️</div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-3xl p-6 shadow-sm hover:shadow transition">
+      <div class="flex items-center justify-between">
+        <div>
+          <div class="text-4xl font-bold text-purple-600">450</div>
+          <div class="text-sm text-gray-600 mt-1">Hoàn tất</div>
+        </div>
+        <div class="w-12 h-12 bg-purple-100 rounded-2xl flex items-center justify-center text-3xl">🏆</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hiệu suất Nhân viên (theo ảnh mới nhất) -->
+  <div class="bg-white rounded-3xl shadow-sm p-8 mb-12">
+    <h2 class="font-semibold text-xl mb-6">Hiệu suất Nhân viên</h2>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="border-b bg-gray-50">
+            <th class="py-5 text-left pl-8 font-medium">Nhân viên</th>
+            <th class="py-5 text-center font-medium">Tổng giao</th>
+            <th class="py-5 text-center font-medium">Chưa LH</th>
+            <th class="py-5 text-center font-medium">Quá 7 ngày</th>
+            <th class="py-5 text-center font-medium">Tỷ lệ liên hệ</th>
+            <th class="py-5 text-center font-medium">Lần LH gần nhất</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y">
+          <tr class="hover:bg-gray-50">
+            <td class="py-5 pl-8 font-medium">Nguyễn Quang Hưng</td>
+            <td class="py-5 text-center">344</td>
+            <td class="py-5 text-center"><span class="bg-gray-200 px-4 py-1 rounded-xl text-xs">0</span></td>
+            <td class="py-5 text-center"><span class="bg-red-600 text-white px-5 py-1 rounded-xl text-xs">344</span></td>
+            <td class="py-5 text-center"><span class="bg-emerald-600 text-white px-6 py-1 rounded-2xl">100%</span></td>
+            <td class="py-5 text-center text-gray-500">1 tháng trước</td>
+          </tr>
+          <tr class="hover:bg-gray-50">
+            <td class="py-5 pl-8 font-medium">Staff Yen</td>
+            <td class="py-5 text-center">310</td>
+            <td class="py-5 text-center"><span class="bg-gray-200 px-4 py-1 rounded-xl text-xs">0</span></td>
+            <td class="py-5 text-center"><span class="bg-red-600 text-white px-5 py-1 rounded-xl text-xs">310</span></td>
+            <td class="py-5 text-center"><span class="bg-emerald-600 text-white px-6 py-1 rounded-2xl">100%</span></td>
+            <td class="py-5 text-center text-gray-500">3 tuần trước</td>
+          </tr>
+          <tr class="hover:bg-gray-50">
+            <td class="py-5 pl-8 font-medium">Lê Tuyết Hằng</td>
+            <td class="py-5 text-center">284</td>
+            <td class="py-5 text-center"><span class="bg-gray-200 px-4 py-1 rounded-xl text-xs">0</span></td>
+            <td class="py-5 text-center"><span class="bg-red-600 text-white px-5 py-1 rounded-xl text-xs">284</span></td>
+            <td class="py-5 text-center"><span class="bg-emerald-600 text-white px-6 py-1 rounded-2xl">100%</span></td>
+            <td class="py-5 text-center text-gray-500">3 tuần trước</td>
+          </tr>
+          <tr class="hover:bg-gray-50">
+            <td class="py-5 pl-8 font-medium">Nguyễn Tuấn Anh</td>
+            <td class="py-5 text-center">248</td>
+            <td class="py-5 text-center"><span class="bg-gray-200 px-4 py-1 rounded-xl text-xs">0</span></td>
+            <td class="py-5 text-center"><span class="bg-red-600 text-white px-5 py-1 rounded-xl text-xs">248</span></td>
+            <td class="py-5 text-center"><span class="bg-emerald-600 text-white px-6 py-1 rounded-2xl">100%</span></td>
+            <td class="py-5 text-center text-gray-500">1 tháng trước</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Danh sách cần hành động (có tab) -->
+  <div class="bg-white rounded-3xl shadow-sm p-8">
+    <h2 class="font-semibold text-xl mb-6">Danh sách cần hành động</h2>
+
+    <!-- Tabs -->
+    <div class="flex border-b mb-6">
+      <button onclick="switchActionTab(0)" id="actionTab0" 
+              class="tab-button px-8 py-4 border-b-2 border-purple-600 text-purple-600 font-medium">Chưa liên hệ</button>
+      <button onclick="switchActionTab(1)" id="actionTab1" 
+              class="tab-button px-8 py-4 text-gray-600 hover:text-gray-800">Quá 7 ngày</button>
+      <button onclick="switchActionTab(2)" id="actionTab2" 
+              class="tab-button px-8 py-4 text-gray-600 hover:text-gray-800">Vừa liên hệ (7 ngày)</button>
+    </div>
+
+    <!-- Table Content -->
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm" id="actionTable">
+        <thead>
+          <tr class="border-b bg-gray-50">
+            <th class="py-5 text-left pl-6 font-medium">Ứng viên</th>
+            <th class="py-5 text-left font-medium">Tỉnh/TP</th>
+            <th class="py-5 text-left font-medium">Đợt tuyển</th>
+            <th class="py-5 text-center font-medium">Lần LH gần nhất</th>
+            <th class="py-5 text-center font-medium">Hành động</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y" id="actionTableBody">
+          <!-- JS sẽ render -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // Dữ liệu theo tab
+  const actionTabs = [
+    // Tab 0: Chưa liên hệ
+    [
+      { name: "Trần Thị Ngọc Mai", province: "Thanh Hóa", campaign: "Su 10", last: "Chưa liên hệ" },
+      { name: "Lê Văn Hải", province: "Đà Nẵng", campaign: "E143", last: "Chưa liên hệ" }
+    ],
+    // Tab 1: Quá 7 ngày
+    [
+      { name: "Phạm Minh Quân", province: "Hà Nội", campaign: "F320", last: "Quá 12 ngày" },
+      { name: "Đỗ Thị Tuyết Ban", province: "Hải Phòng", campaign: "VBHQ", last: "Quá 8 ngày" }
+    ],
+    // Tab 2: Vừa liên hệ
+    [
+      { name: "Nguyễn Tuấn Anh", province: "TP.HCM", campaign: "Su 10", last: "Hôm qua" },
+      { name: "Lê Tuyết Hằng", province: "Đà Nẵng", campaign: "E143", last: "2 ngày trước" }
+    ]
+  ];
+
+  function switchActionTab(index) {
+    // Active tab
+    document.querySelectorAll('.tab-button').forEach((btn, i) => {
+      btn.classList.toggle('border-b-2', i === index);
+      btn.classList.toggle('border-purple-600', i === index);
+      btn.classList.toggle('text-purple-600', i === index);
+      btn.classList.toggle('text-gray-600', i !== index);
+    });
+
+    // Render table
+    const tbody = document.getElementById('actionTableBody');
+    tbody.innerHTML = actionTabs[index].map(row => `
+      <tr class="hover:bg-gray-50">
+        <td class="py-5 pl-6 font-medium">${row.name}</td>
+        <td class="py-5">${row.province}</td>
+        <td class="py-5">${row.campaign}</td>
+        <td class="py-5 text-center ${row.last.includes('Chưa') ? 'text-red-600' : row.last.includes('Quá') ? 'text-amber-600' : 'text-emerald-600'}">
+          ${row.last}
+        </td>
+        <td class="py-5 text-center">
+          <button onclick="alert('Xem chi tiết ${row.name}')" 
+                  class="text-purple-600 hover:text-purple-700 font-medium">Chi tiết</button>
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  // Khởi tạo tab đầu tiên
+  window.onload = () => switchActionTab(0);
+</script>
+
+</body>
+</html>

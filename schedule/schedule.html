@@ -1,0 +1,541 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lịch của tôi - KIYOKAWA CRM</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+</head>
+<!-- Popup -->
+<!--TẠO LỊCH HẸN-->
+<div id="popup-container" class="fixed inset-0 bg-black/40 hidden items-center justify-center z-50">
+  
+  <div class="bg-white rounded-3xl shadow-2xl w-full max-w-2xl mx-4 overflow-hidden relative">
+    
+    <!-- Header -->
+    <div class="px-8 py-6 border-b bg-emerald-600 text-white flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <i class="fas fa-calendar-plus text-2xl"></i>
+        <h2 class="text-xl font-semibold">Tạo lịch hẹn mới</h2>
+      </div>
+      <button onclick="closePopup()" class="text-3xl leading-none hover:text-gray-200">×</button>
+    </div>
+
+    <div class="p-8 space-y-8">
+
+      <!-- Chọn ứng viên -->
+  <div id="candidateSelector">
+  <label class="block text-sm font-medium text-gray-700 mb-3">
+    Chọn ứng viên <span class="text-red-500">*</span>
+  </label>
+
+  <!-- Search -->
+  <div class="relative mb-3">
+    <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+    <input 
+      type="text" 
+      id="searchCandidate"
+      placeholder="Tìm theo tên hoặc số điện thoại..."
+      class="w-full border border-gray-300 rounded-2xl pl-11 pr-4 py-3 focus:outline-none focus:border-emerald-600"
+      oninput="searchCandidate()"
+    >
+  </div>
+
+  <!-- List -->
+  <div class="max-h-60 overflow-y-auto border border-gray-200 rounded-3xl p-3 space-y-2" id="candidateList"></div>
+</div>
+
+      <!-- Form -->
+      <div id="appointmentForm" class="space-y-7 hidden">
+
+        <div class="bg-gray-50 rounded-2xl p-4">
+          <p class="text-sm text-gray-600">
+            Ứng viên đã chọn: 
+            <span id="selectedCandidateName" class="font-semibold text-emerald-700"></span>
+          </p>
+          <button onclick="backToCandidate()"
+          class="mt-2 text-sm text-blue-600 hover:underline">
+          ← Chọn lại ứng viên
+          </button>
+        </div>
+
+        <!-- Loại -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Loại lịch hẹn</label>
+          <div class="grid grid-cols-3 gap-3">
+            <button onclick="selectAppointmentType(this)" class="type-btn active border border-emerald-600 text-emerald-600 py-3 rounded-2xl text-sm font-medium">Tư vấn</button>
+            <button onclick="selectAppointmentType(this)" class="type-btn border border-gray-300 py-3 rounded-2xl text-sm font-medium">Phỏng vấn</button>
+            <button onclick="selectAppointmentType(this)" class="type-btn border border-gray-300 py-3 rounded-2xl text-sm font-medium">Nộp hồ sơ</button>
+          </div>
+        </div>
+
+        <!-- Thời gian -->
+        <div>
+          <input type="datetime-local" 
+                 class="w-full border border-gray-300 rounded-2xl px-5 py-4">
+        </div>
+
+        <!-- Địa điểm -->
+        <div>
+          <select class="w-full border border-gray-300 rounded-2xl px-5 py-4">
+            <option>Văn phòng</option>
+            <option>Online</option>
+            <option>Tại nhà</option>
+          </select>
+        </div>
+        <!-- Ghi chú -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Ghi chú</label>
+          <textarea 
+            id="notes"
+            rows="3"
+            placeholder="Nội dung tư vấn, lưu ý..."
+            class="w-full border border-gray-300 rounded-3xl px-5 py-4 focus:outline-none focus:border-emerald-600">
+          </textarea>
+        </div>
+
+        <!-- Nhắc nhở -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Nhắc nhở trước</label>
+          <div class="flex gap-6">
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="radio" name="reminder" value="30" checked> 
+              <span class="text-sm">30 phút</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="radio" name="reminder" value="60"> 
+              <span class="text-sm">1 giờ</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="radio" name="reminder" value="1440"> 
+              <span class="text-sm">1 ngày</span>
+            </label>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="border-t px-8 py-6 flex gap-4 bg-gray-50">
+      <button onclick="closePopup()" 
+              class="flex-1 py-4 border border-gray-300 rounded-2xl font-medium hover:bg-gray-100">
+        Hủy
+      </button>
+      <button onclick="saveAppointment()" id="saveBtn"
+              class="flex-1 py-4 bg-emerald-600 text-white rounded-2xl font-medium hover:bg-emerald-700 disabled:bg-gray-300" disabled>
+        Lưu lịch hẹn
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<!-- POPUP EDIT APPOINTMENT -->
+<div id="edit-popup" class="fixed inset-0 bg-black/40 hidden items-center justify-center z-50">
+
+  <div class="bg-white rounded-3xl shadow-2xl w-full max-w-2xl mx-4 overflow-hidden">
+    
+    <!-- Header -->
+    <div class="px-8 py-6 border-b bg-amber-600 text-white flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <i class="fas fa-edit text-2xl"></i>
+        <h2 class="text-xl font-semibold">Chỉnh sửa lịch hẹn</h2>
+      </div>
+      <button onclick="closeEditPopup()" class="text-3xl leading-none">×</button>
+    </div>
+
+    <div class="p-8 space-y-6">
+
+      <!-- Candidate -->
+      <div class="bg-amber-50 border border-amber-200 rounded-2xl p-5">
+        <p class="text-sm text-gray-600">Ứng viên:</p>
+        <p id="editName" class="font-semibold text-lg"></p>
+        <p id="editSub" class="text-sm text-gray-500"></p>
+      </div>
+
+      <!-- Type -->
+      <div>
+        <label class="block text-sm font-medium mb-2">Loại lịch hẹn</label>
+        <div class="grid grid-cols-3 gap-3">
+          <button onclick="selectEditType(this)" class="edit-type border-2 border-amber-600 text-amber-600 py-3 rounded-2xl">Tư vấn</button>
+          <button onclick="selectEditType(this)" class="edit-type border py-3 rounded-2xl">Phỏng vấn</button>
+          <button onclick="selectEditType(this)" class="edit-type border py-3 rounded-2xl">Nộp hồ sơ</button>
+        </div>
+      </div>
+
+      <!-- Time -->
+      <input id="editTime" type="datetime-local" 
+             class="w-full border rounded-2xl px-5 py-4">
+
+      <!-- Location -->
+      <select id="editLocation" class="w-full border rounded-2xl px-5 py-4">
+        <option>Văn phòng</option>
+        <option>Online</option>
+        <option>Tại nhà</option>
+      </select>
+
+      <!-- Note -->
+      <textarea id="editNote" rows="3"
+        class="w-full border rounded-2xl px-5 py-4"></textarea>
+
+    </div>
+
+    <div class="border-t px-8 py-6 flex gap-4">
+      <button onclick="closeEditPopup()" class="flex-1 py-4 border rounded-2xl">Hủy</button>
+      <button onclick="saveEdit()" class="flex-1 py-4 bg-amber-600 text-white rounded-2xl">
+        Cập nhật
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<body class="bg-gray-50 p-8">
+
+  <div class="max-w-screen-2xl mx-auto">
+    <h1 class="text-3xl font-semibold mb-2">Lịch của tôi</h1>
+    <p class="text-gray-500 mb-8">Quản lý lịch hẹn và hoạt động cá nhân</p>
+
+    <!-- Header controls -->
+    <div class="flex justify-between items-center mb-8">
+      <div class="flex gap-4">
+        <button class="bg-white px-5 py-3 rounded-2xl shadow-sm flex items-center gap-2 hover:bg-gray-50">
+          <i class="fas fa-chevron-left"></i>
+        </button>
+        <div class="text-lg font-semibold">Tháng 4, 2026</div>
+        <button class="bg-white px-5 py-3 rounded-2xl shadow-sm flex items-center gap-2 hover:bg-gray-50">
+          <i class="fas fa-chevron-right"></i>
+        </button>
+      </div>
+
+      <button onclick="openPopup()" 
+              class="bg-purple-600 text-white px-6 py-3 rounded-2xl flex items-center gap-2 hover:bg-purple-700">
+        <i class="fas fa-plus"></i>
+        <span>Tạo lịch hẹn mới</span>
+      </button>
+    </div>
+
+    <div class="grid grid-cols-12 gap-8">
+
+      <!-- Lịch tháng (Sidebar) -->
+      <!-- Lịch tháng (Sidebar) -->
+<div class="col-span-3">
+  <div class="bg-white rounded-3xl p-6 shadow-sm">
+    <h3 class="font-semibold mb-4 flex items-center gap-2">
+      <i class="fas fa-calendar-alt"></i> Lịch tháng 4/2026
+    </h3>
+
+    <!-- Header ngày -->
+    <div class="grid grid-cols-7 text-center text-xs mb-2">
+      <div class="text-red-500 font-medium">CN</div>
+      <div class="font-medium">T2</div>
+      <div class="font-medium">T3</div>
+      <div class="font-medium">T4</div>
+      <div class="font-medium">T5</div>
+      <div class="font-medium">T6</div>
+      <div class="font-medium">T7</div>
+    </div>
+
+    <!-- Full 6 rows calendar -->
+    <div class="grid grid-cols-7 gap-2 text-center text-sm">
+
+      <!-- Tuần 1 (tháng trước) -->
+      <div class="h-10 text-gray-300 flex items-center justify-center">30</div>
+      <div class="h-10 text-gray-300 flex items-center justify-center">31</div>
+      <div class="h-10 bg-purple-100 rounded-xl flex items-center justify-center text-purple-700 font-medium">1</div>
+      <div class="h-10 flex items-center justify-center">2</div>
+      <div class="h-10 flex items-center justify-center">3</div>
+      <div class="h-10 bg-emerald-100 rounded-xl flex items-center justify-center text-emerald-700 font-medium">4</div>
+      <div class="h-10 flex items-center justify-center">5</div>
+
+      <!-- Tuần 2 -->
+      <div class="h-10 bg-purple-100 rounded-xl flex items-center justify-center text-purple-700 font-medium">6</div>
+      <div class="h-10 flex items-center justify-center">7</div>
+      <div class="h-10 flex items-center justify-center">8</div>
+      <div class="h-10 flex items-center justify-center">9</div>
+      <div class="h-10 flex items-center justify-center">10</div>
+      <div class="h-10 flex items-center justify-center">11</div>
+      <div class="h-10 flex items-center justify-center">12</div>
+
+      <!-- Tuần 3 -->
+      <div class="h-10 flex items-center justify-center">13</div>
+      <div class="h-10 flex items-center justify-center">14</div>
+      <div class="h-10 flex items-center justify-center">15</div>
+      <div class="h-10 flex items-center justify-center">16</div>
+      <div class="h-10 flex items-center justify-center">17</div>
+      <div class="h-10 flex items-center justify-center">18</div>
+      <div class="h-10 flex items-center justify-center">19</div>
+
+      <!-- Tuần 4 -->
+      <div class="h-10 flex items-center justify-center">20</div>
+      <div class="h-10 flex items-center justify-center">21</div>
+      <div class="h-10 bg-purple-100 rounded-xl flex items-center justify-center text-purple-700 font-medium">22</div>
+      <div class="h-10 flex items-center justify-center">23</div>
+      <div class="h-10 flex items-center justify-center">24</div>
+      <div class="h-10 flex items-center justify-center">25</div>
+      <div class="h-10 flex items-center justify-center">26</div>
+
+      <!-- Tuần 5 -->
+      <div class="h-10 flex items-center justify-center">27</div>
+      <div class="h-10 flex items-center justify-center">28</div>
+      <div class="h-10 flex items-center justify-center">29</div>
+      <div class="h-10 flex items-center justify-center">30</div>
+
+      <!-- Tháng sau -->
+      <div class="h-10 text-gray-300 flex items-center justify-center">1</div>
+      <div class="h-10 text-gray-300 flex items-center justify-center">2</div>
+      <div class="h-10 text-gray-300 flex items-center justify-center">3</div>
+
+    </div>
+  </div>
+</div>
+      <!-- Danh sách lịch hẹn hôm nay và sắp tới -->
+      <div class="col-span-9">
+        <div class="bg-white rounded-3xl shadow-sm p-8">
+          <h2 class="font-semibold text-xl mb-6 flex items-center gap-3">
+            <i class="fas fa-clock"></i> 
+            Lịch hẹn hôm nay (05/04/2026)
+          </h2>
+
+          <div class="space-y-6">
+            <!-- Lịch 1 -->
+            <div class="flex gap-6 border-l-4 border-emerald-500 pl-6">
+              <div class="w-20 text-right">
+                <div class="text-2xl font-semibold">09:30</div>
+                <div class="text-xs text-gray-500">Thứ 2</div>
+              </div>
+              <div class="flex-1">
+                <div class="flex justify-between">
+                  <div>
+                    <div class="font-medium">Tư vấn hồ sơ - Nguyễn Thị Lan Anh</div>
+                    <div class="text-sm text-gray-600">Xuất khẩu lao động Nhật Bản • Online (Zoom)</div>
+                  </div>
+                </div>
+                <div class="mt-3 text-xs text-gray-500">Người tạo: Quản Trị Viên</div>
+                <div class="text-xs text-gray-500 italic note">Ghi chú: Tư vấn lần đầu</div>
+              </div>
+              <div class="flex flex-col gap-2">
+                <button onclick="openEditPopup(this)" 
+                        class="text-blue-600 hover:text-blue-700">
+                  <i class="fas fa-edit"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Lịch 2 -->
+            <div class="flex gap-6 border-l-4 border-amber-500 pl-6">
+              <div class="w-20 text-right">
+                <div class="text-2xl font-semibold">14:00</div>
+                <div class="text-xs text-gray-500">Thứ 2</div>
+              </div>
+              <div class="flex-1">
+                <div class="flex justify-between">
+                  <div>
+                    <div class="font-medium">Gặp trực tiếp - Lê Minh Quân</div>
+                    <div class="text-sm text-gray-600">Văn phòng KIYOKAWA • Phỏng vấn hồ sơ</div>
+                  </div>
+                </div>
+                <div class="mt-3 text-xs text-gray-500">Người tạo: Quản trị viên</div>
+                <div class="text-xs text-gray-500 italic note">Ghi chú: Xem xét những gì cần bổ sung cho hồ sơ</div>
+              </div>
+              <div class="flex flex-col gap-2">
+                <button onclick="openEditPopup(this)" 
+                        class="text-blue-600 hover:text-blue-700">
+                  <i class="fas fa-edit"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Lịch sắp tới -->
+        <div class="mt-10 bg-white rounded-3xl shadow-sm p-8">
+          <h2 class="font-semibold text-lg mb-6">Lịch hẹn sắp tới (7 ngày tới)</h2>
+          <div class="space-y-4 text-sm">
+            <div class="flex items-center justify-between border-b pb-4">
+              <div class="flex items-center gap-4">
+                <div class="text-center">
+                  <div class="text-xs text-gray-500">06/04</div>
+                  <div class="font-semibold">10:00</div>
+                </div>
+                <div>
+                  <div class="font-medium">Tư vấn chương trình - Trần Thị Ngọc Mai</div>
+                  <div class="text-gray-500">Du học Hàn Quốc</div>
+                </div>
+              </div>
+              <span class="text-emerald-600 text-xs">Còn 1 ngày</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+<script>
+let selectedCandidate = null;
+let currentEditingCard = null;
+
+const myCandidates = [
+  { id: 1, name: "Nguyễn Thị Lan Anh", phone: "0987 654 321" },
+  { id: 2, name: "Trần Văn Hải", phone: "0912 345 678" },
+  { id: 3, name: "Lê Thị Ngọc Mai", phone: "0978 123 456" },
+  { id: 4, name: "Phạm Minh Quân", phone: "0934 567 890" }
+];
+
+function openPopup() {
+  document.getElementById('popup-container').classList.remove('hidden');
+  document.getElementById('popup-container').classList.add('flex');
+  renderCandidateList();
+}
+
+function closePopup() {
+  document.getElementById('popup-container').classList.add('hidden');
+  document.getElementById('popup-container').classList.remove('flex');
+}
+
+function renderCandidateList(list = myCandidates) {
+  const container = document.getElementById('candidateList');
+
+  if (list.length === 0) {
+    container.innerHTML = `<p class="text-center text-gray-400 py-4">Không tìm thấy ứng viên</p>`;
+    return;
+  }
+
+  container.innerHTML = list.map(c => `
+    <div onclick="selectCandidate(${c.id}, '${c.name}')"
+         class="flex items-center justify-between p-4 hover:bg-gray-100 rounded-2xl cursor-pointer">
+      <div>
+        <p class="font-medium">${c.name}</p>
+        <p class="text-sm text-gray-500">${c.phone}</p>
+      </div>
+      <i class="fas fa-chevron-right text-gray-400"></i>
+    </div>
+  `).join('');
+}
+
+function selectCandidate(id, name) {
+  selectedCandidate = { id, name };
+
+  // Ẩn toàn bộ khu chọn ứng viên (search + list)
+  document.getElementById('candidateSelector').classList.add('hidden');
+
+  // Hiện form
+  document.getElementById('appointmentForm').classList.remove('hidden');
+
+  document.getElementById('selectedCandidateName').textContent = name;
+  document.getElementById('saveBtn').disabled = false;
+}
+
+function backToCandidate() {
+  selectedCandidate = null;
+
+  // Hiện lại phần chọn ứng viên
+  document.getElementById('candidateSelector').classList.remove('hidden');
+
+  // Ẩn form
+  document.getElementById('appointmentForm').classList.add('hidden');
+
+  // Reset search (optional nhưng nên có)
+  document.getElementById('searchCandidate').value = "";
+  renderCandidateList();
+
+  // Disable nút lưu
+  document.getElementById('saveBtn').disabled = true;
+}
+
+function selectAppointmentType(el) {
+  document.querySelectorAll('.type-btn').forEach(btn => {
+    btn.classList.remove('border-2','border-emerald-600','text-emerald-600');
+  });
+  el.classList.add('border-2','border-emerald-600','text-emerald-600');
+}
+
+function saveAppointment() {
+  if (!selectedCandidate) return alert("Chọn ứng viên trước!");
+  
+  alert("Tạo lịch thành công!");
+  closePopup();
+}
+function searchCandidate() {
+  const keyword = document.getElementById('searchCandidate').value.toLowerCase();
+
+  const filtered = myCandidates.filter(c => 
+    c.name.toLowerCase().includes(keyword) ||
+    c.phone.includes(keyword)
+  );
+
+  renderCandidateList(filtered);
+}
+
+function openEditPopup(btn) {
+  const card = btn.closest('[class*="border-l-4"]');
+  currentEditingCard = card;
+
+  const name = card.querySelector('.font-medium').innerText;
+  const sub = card.querySelector('.text-sm.text-gray-600')?.innerText || '';
+  const time = card.querySelector('.text-2xl').innerText;
+
+  const fakeDate = "2026-04-05T" + time;
+
+  document.getElementById('edit-popup').classList.remove('hidden');
+  document.getElementById('edit-popup').classList.add('flex');
+
+  document.getElementById('editName').innerText = name;
+  document.getElementById('editSub').innerText = sub;
+  document.getElementById('editTime').value = fakeDate;
+
+  // reset type UI
+  document.querySelectorAll('.edit-type').forEach(btn => {
+    btn.classList.remove('border-2','border-amber-600','text-amber-600');
+  });
+  document.querySelector('.edit-type').classList.add('border-2','border-amber-600','text-amber-600');
+}
+
+function selectEditType(el) {
+  document.querySelectorAll('.edit-type').forEach(btn => {
+    btn.classList.remove('border-2','border-amber-600','text-amber-600');
+  });
+  el.classList.add('border-2','border-amber-600','text-amber-600');
+}
+
+function closeEditPopup() {
+  document.getElementById('edit-popup').classList.add('hidden');
+  document.getElementById('edit-popup').classList.remove('flex');
+}
+
+function saveEdit() {
+  if (!currentEditingCard) return;
+
+  const newTime = document.getElementById('editTime').value;
+  const newLocation = document.getElementById('editLocation').value;
+  const newNote = document.getElementById('editNote').value;
+
+  const selectedTypeBtn = document.querySelector('.edit-type.border-2');
+  const newType = selectedTypeBtn ? selectedTypeBtn.innerText : '';
+
+  // format lại giờ
+  const timeOnly = newTime.split('T')[1] || '00:00';
+
+  // update UI
+  currentEditingCard.querySelector('.text-2xl').innerText = timeOnly;
+
+  const titleEl = currentEditingCard.querySelector('.font-medium');
+  if (newType) {
+    const name = titleEl.innerText.split(' - ')[1] || titleEl.innerText;
+    titleEl.innerText = `${newType} - ${name}`;
+  }
+
+  const subEl = currentEditingCard.querySelector('.text-sm.text-gray-600');
+  if (subEl) {
+    subEl.innerText = newLocation;
+  }
+
+  closeEditPopup();
+}
+
+</script>
+</html>

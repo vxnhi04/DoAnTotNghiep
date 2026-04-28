@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Danh sách đợt tuyển dụng - KIYOKAWA CRM</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+</head>
+<body class="bg-gray-50 p-8">
+
+<div class="max-w-screen-2xl mx-auto">
+
+  <div class="flex justify-between items-center mb-8">
+    <div>
+      <h1 class="text-3xl font-semibold">Danh sách đợt tuyển dụng</h1>
+      <p class="text-gray-500">Quản lý tất cả các đợt tuyển dụng trong hệ thống</p>
+    </div>
+    <a href="create_campaign.html" 
+      class="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-2xl flex items-center gap-2 transition">
+      <i class="fas fa-plus"></i>
+      <span>Tạo đợt mới</span>
+    </a>
+  </div>
+
+  <!-- Bộ lọc -->
+  <div class="bg-white rounded-3xl p-6 mb-8 shadow-sm">
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="font-semibold text-lg">Bộ lọc nâng cao</h2>
+      <div class="flex gap-3">
+        <button onclick="applyFilter()" class="px-6 py-2.5 bg-purple-600 text-white rounded-2xl text-sm font-medium">Lọc</button>
+        <button onclick="resetFilter()" class="px-6 py-2.5 border border-gray-300 rounded-2xl text-sm hover:bg-gray-50">Xóa</button>
+      </div>
+    </div>
+    
+    <div class="grid grid-cols-4 gap-4">
+      <input type="text" id="searchName" placeholder="Tên đợt tuyển dụng" 
+             class="border border-gray-300 rounded-2xl px-4 py-3 focus:outline-none focus:border-purple-500">
+
+      <select id="filterStatus" class="border border-gray-300 rounded-2xl px-4 py-3 focus:outline-none focus:border-purple-500">
+        <option value="">Trạng thái</option>
+        <option value="Đang diễn ra">Đang diễn ra</option>
+        <option value="Sắp diễn ra">Sắp diễn ra</option>
+        <option value="Đã kết thúc">Đã kết thúc</option>
+      </select>
+
+      <input type="date" id="startDate" class="border border-gray-300 rounded-2xl px-4 py-3 focus:outline-none focus:border-purple-500">
+
+      <input type="date" id="endDate" class="border border-gray-300 rounded-2xl px-4 py-3 focus:outline-none focus:border-purple-500">
+    </div>
+  </div>
+
+  <!-- Bảng danh sách đợt -->
+  <div class="bg-white rounded-3xl shadow-sm overflow-hidden">
+    <table class="w-full">
+      <thead class="bg-gray-50">
+        <tr>
+          <th class="px-6 py-5 text-left font-medium text-gray-700">Tên đợt</th>
+          <th class="px-6 py-5 text-left font-medium text-gray-700">Thời gian</th>
+          <th class="px-4 py-5 text-center font-medium text-gray-700 w-32">Số lượng ứng viên</th>
+          <th class="px-8 py-5 text-center font-semibold text-gray-800 text-base w-48">Trạng thái</th>
+          <th class="px-8 py-5 text-left font-semibold text-gray-800 text-base w-48">Người tạo</th>
+          <th class="px-8 py-5 text-center font-semibold text-gray-800 text-base w-40">Thao tác</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y text-sm" id="campaignTableBody">
+        <!-- Dữ liệu sẽ được render bằng JavaScript -->
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+// Danh sách 10 đợt tuyển dụng đồng nhất với toàn hệ thống
+const campaigns = [
+  {
+    id: 1,
+    name: "Su 10 - Xuất khẩu lao động Nhật Bản",
+    period: "01/03/2026 - 30/04/2026",
+    applicants: 894,
+    status: "Đang diễn ra",
+    creator: "Nguyễn Quang Hưng"
+  },
+  {
+    id: 2,
+    name: "E143 - Du học Hàn Quốc",
+    period: "15/02/2026 - 15/03/2026",
+    applicants: 267,
+    status: "Sắp diễn ra",
+    creator: "Đỗ Thị Tuyết Ban"
+  },
+  {
+    id: 3,
+    name: "F320 - Kỹ sư Nhật Bản",
+    period: "10/01/2026 - 28/02/2026",
+    applicants: 142,
+    status: "Đã kết thúc",
+    creator: "Lê Tuyết Hằng"
+  },
+  {
+    id: 4,
+    name: "VBHQ - Xuất khẩu lao động Đài Loan",
+    period: "05/03/2026 - 20/05/2026",
+    applicants: 98,
+    status: "Đang diễn ra",
+    creator: "Staff Yen"
+  },
+  {
+    id: 5,
+    name: "Lữ Đoàn 234 - Kỹ sư Hàn Quốc",
+    period: "01/04/2026 - 30/06/2026",
+    applicants: 67,
+    status: "Sắp diễn ra",
+    creator: "Nguyễn Quang Hưng"
+  },
+  {
+    id: 6,
+    name: "K336 - Du học Nhật Bản",
+    period: "20/02/2026 - 10/04/2026",
+    applicants: 45,
+    status: "Đã kết thúc",
+    creator: "Phạm Minh Quân"
+  },
+  {
+    id: 7,
+    name: "Trực thuộc QĐ - Xuất khẩu lao động",
+    period: "01/01/2026 - 31/03/2026",
+    applicants: 156,
+    status: "Đang diễn ra",
+    creator: "Lê Tuyết Hằng"
+  },
+  {
+    id: 8,
+    name: "Su 11 - Đợt bổ sung Nhật Bản",
+    period: "15/04/2026 - 30/06/2026",
+    applicants: 23,
+    status: "Sắp diễn ra",
+    creator: "Nguyễn Tuấn Anh"
+  }
+];
+
+// Render bảng
+function renderCampaigns(data) {
+  const tbody = document.getElementById('campaignTableBody');
+  tbody.innerHTML = '';
+
+  data.forEach(c => {
+    const row = document.createElement('tr');
+    row.className = "hover:bg-gray-50 transition";
+    row.innerHTML = `
+      <td class="px-6 py-6">
+        <div class="font-medium">${c.name}</div>
+        <div class="text-xs text-gray-500 mt-1">Đợt tuyển dụng</div>
+      </td>
+      <td class="px-6 py-6 text-gray-600">${c.period}</td>
+      <td class="px-4 py-6 text-center font-semibold text-purple-600 w-32">${c.applicants}</td>
+      <td class="px-8 py-6 text-center w-48">
+        <span class="px-5 py-2 rounded-2xl text-sm font-semibold
+          ${c.status === 'Đang diễn ra' ? 'bg-emerald-100 text-emerald-700' : 
+            c.status === 'Sắp diễn ra' ? 'bg-amber-100 text-amber-700' : 
+            'bg-gray-100 text-gray-600'}">
+          ${c.status}
+        </span>
+      </td>
+      <td class="px-8 py-6 text-gray-700 text-base w-48">${c.creator}</td>
+      <td class="px-6 py-6 text-center">
+        <button onclick="viewStats(${c.id})" class="text-emerald-600 hover:text-emerald-700 mx-2" title="Thống kê">
+          <i class="fas fa-chart-bar"></i>
+        </button>
+        <button onclick="editCampaign(${c.id})" class="text-blue-600 hover:text-blue-700 mx-2" title="Chỉnh sửa">
+          <i class="fas fa-edit"></i>
+        </button>
+        <button onclick="deleteCampaign(${c.id})" class="text-red-600 hover:text-red-700 mx-2" title="Xóa">
+          <i class="fas fa-trash"></i>
+        </button>
+      </td>
+    `;
+    tbody.appendChild(row);
+  });
+}
+
+// Các hàm hành động
+function viewStats(id) {
+  alert(`Đang xem thống kê chi tiết của đợt ID: ${id}`);
+}
+
+function editCampaign(id) {
+  alert(`Đang mở form chỉnh sửa đợt tuyển dụng ID: ${id}`);
+}
+
+function deleteCampaign(id) {
+  if (confirm("Bạn có chắc muốn xóa đợt tuyển dụng này?")) {
+    alert(`Đợt tuyển dụng ID ${id} đã được xóa.`);
+    // Trong thực tế sẽ xóa khỏi mảng và render lại
+  }
+}
+
+function applyFilter() {
+  const name = document.getElementById('searchName').value.toLowerCase();
+  const status = document.getElementById('filterStatus').value;
+
+  const filtered = campaigns.filter(c => {
+    const matchName = !name || c.name.toLowerCase().includes(name);
+    const matchStatus = !status || c.status === status;
+    return matchName && matchStatus;
+  });
+
+  renderCampaigns(filtered);
+}
+
+function resetFilter() {
+  document.getElementById('searchName').value = '';
+  document.getElementById('filterStatus').value = '';
+  renderCampaigns(campaigns);
+}
+
+// Khởi tạo
+window.onload = () => {
+  renderCampaigns(campaigns);
+};
+</script>
+
+</body>
+</html>

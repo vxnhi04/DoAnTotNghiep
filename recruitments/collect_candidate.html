@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thu thập ứng viên - KIYOKAWA CRM</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+</head>
+<body class="bg-gray-50">
+
+<div class="flex-1 p-8 overflow-auto">
+
+    <!-- Header -->
+    <div class="flex items-center gap-4 mb-10">
+      <button onclick="history.back()" class="text-gray-500 hover:text-gray-700 p-2">
+        <i class="fas fa-arrow-left text-3xl"></i>
+      </button>
+      <div>
+        <h1 class="text-4xl font-semibold">Thu thập ứng viên</h1>
+        <p class="text-gray-500 mt-1">Nhập thông tin ứng viên thủ công vào hệ thống</p>
+      </div>
+    </div>
+
+  <div class="bg-white rounded-3xl shadow-sm p-10">
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+
+      <!-- Cột trái: Thông tin ứng viên -->
+      <div>
+        <h2 class="font-semibold text-xl mb-6">Thông tin ứng viên</h2>
+
+        <div class="space-y-6">
+          <div>
+            <label class="block text-sm font-medium mb-2">Họ và tên <span class="text-red-500">*</span></label>
+            <input type="text" class="w-full border border-gray-300 rounded-2xl px-6 py-4 focus:outline-none focus:border-purple-500" placeholder="Nhập họ và tên">
+          </div>
+
+          <div class="grid grid-cols-2 gap-6">
+            <div>
+              <label class="block text-sm font-medium mb-2">Số điện thoại <span class="text-red-500">*</span></label>
+              <input type="tel" class="w-full border border-gray-300 rounded-2xl px-6 py-4 focus:outline-none focus:border-purple-500" placeholder="0987 654 321">
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-2">Ngày sinh</label>
+              <input type="date" class="w-full border border-gray-300 rounded-2xl px-6 py-4 focus:outline-none focus:border-purple-500">
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium mb-2">Địa chỉ thường trú</label>
+            <textarea rows="3" class="w-full border border-gray-300 rounded-3xl px-6 py-4 focus:outline-none focus:border-purple-500" 
+                      placeholder="Số nhà, đường, quận/huyện, tỉnh/thành phố"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cột phải: Đăng ký chương trình & Quốc gia -->
+      <div>
+        <h2 class="font-semibold text-xl mb-6">Đăng ký chương trình & Quốc gia</h2>
+
+        <!-- Xuất khẩu lao động -->
+        <div class="mb-10">
+          <label class="flex items-center gap-3 mb-4 cursor-pointer">
+            <div onclick="toggleProgram(this, 'xlld')" 
+            class="flex items-center gap-3 mb-4 cursor-pointer group">
+          <div class="w-10 h-10 flex items-center justify-center rounded-xl bg-purple-100 text-purple-600 group-hover:bg-purple-200">
+            <i class="fas fa-plane-departure"></i>
+          </div>
+          <span class="font-medium text-lg">Xuất khẩu lao động</span>
+        </div>
+          </label>
+          <div class="grid grid-cols-3 gap-4 pl-8 text-sm" id="xlld-countries">
+            <!-- JS sẽ render -->
+          </div>
+        </div>
+
+        <!-- Du học hệ vừa học vừa làm -->
+         
+        <div class="mb-10">
+          <label class="flex items-center gap-3 mb-4 cursor-pointer">
+            <div onclick="toggleProgram(this, 'duhoc')" 
+                class="flex items-center gap-3 mb-4 cursor-pointer group">
+              <div class="w-10 h-10 flex items-center justify-center rounded-xl bg-blue-100 text-blue-600 group-hover:bg-blue-200">
+                <i class="fas fa-graduation-cap"></i>
+              </div>
+              <span class="font-medium text-lg">Du học hệ vừa học vừa làm</span>
+            </div>
+          </label>
+          <div class="grid grid-cols-3 gap-4 pl-8 text-sm" id="duhoc-countries">
+            <!-- JS sẽ render -->
+          </div>
+        </div>
+
+        <!-- Chương trình Kỹ sư -->
+        <div>
+          <label class="flex items-center gap-3 mb-4 cursor-pointer">
+            <div onclick="toggleProgram(this, 'kysu')" 
+                class="flex items-center gap-3 mb-4 cursor-pointer group">
+              <div class="w-10 h-10 flex items-center justify-center rounded-xl bg-emerald-100 text-emerald-600 group-hover:bg-emerald-200">
+                <i class="fas fa-user-cog"></i>
+              </div>
+              <span class="font-medium text-lg">Chương trình Kỹ sư</span>
+            </div>
+          </label>
+          <div class="grid grid-cols-3 gap-4 pl-8 text-sm" id="kysu-countries">
+            <!-- JS sẽ render -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- Người thân -->
+   <div class="flex items-center gap-4 mb-4">
+      <label class="text-sm font-medium">Thông tin người thân</label>
+
+      <button onclick="openRelativePopup()" 
+              class="px-4 py-2 bg-purple-600 text-white rounded-xl text-sm hover:bg-purple-700">
+        + Thêm
+      </button>
+    </div>
+
+    <!-- Ghi chú thêm -->
+    <div class="mt-12">
+      <label class="block text-sm font-medium mb-2">Ghi chú thêm về ứng viên</label>
+      <textarea rows="3" class="w-full border border-gray-300 rounded-3xl px-6 py-4 focus:outline-none focus:border-purple-500" 
+                placeholder="Ghi chú về mức độ quan tâm, điều kiện gia đình..."></textarea>
+    </div>
+
+    <!-- Buttons -->
+    <div class="flex justify-end gap-4 mt-16">
+      <button onclick="history.back()" class="px-10 py-4 border border-gray-300 rounded-2xl hover:bg-gray-50">Hủy</button>
+      <button onclick="saveCandidate()" class="px-10 py-4 bg-purple-600 text-white rounded-2xl hover:bg-purple-700">Lưu ứng viên</button>
+      <button onclick="saveAndContinue()" class="px-10 py-4 bg-white border border-purple-600 text-purple-600 rounded-2xl hover:bg-purple-50">Lưu &amp; Nhập tiếp</button>
+    </div>
+  </div>
+</div>
+
+<!-- Popup người thân -->
+<div id="relativePopup" class="fixed inset-0 bg-black/40 hidden items-center justify-center z-50">
+  <div class="bg-white rounded-3xl w-full max-w-lg p-8">
+
+    <h3 class="text-xl font-semibold mb-6">Thêm người thân</h3>
+
+    <div class="space-y-4">
+      <input id="relName" type="text" placeholder="Họ tên"
+        class="w-full border rounded-2xl px-4 py-3">
+
+      <input id="relPhone" type="text" placeholder="Số điện thoại"
+        class="w-full border rounded-2xl px-4 py-3">
+
+      <input id="relRelation" type="text" placeholder="Mối quan hệ (Bố, mẹ...)"
+        class="w-full border rounded-2xl px-4 py-3">
+    </div>
+
+    <div class="flex gap-3 mt-6">
+      <button onclick="closeRelativePopup()" 
+              class="flex-1 border rounded-2xl py-3">Hủy</button>
+      <button onclick="saveRelative()" 
+              class="flex-1 bg-purple-600 text-white rounded-2xl py-3">
+        Lưu
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// Dữ liệu quốc gia theo chương trình (đồng bộ với trang Quản lý quốc gia)
+const countriesByProgram = {
+  xlld: ["Nhật Bản", "Hàn Quốc", "Đài Loan", "Ba Lan", "Hungary", "Slovakia", "Singapore", "Malaysia", "Thái Lan", "Indonesia"],
+  duhoc: ["Nhật Bản", "Hàn Quốc", "Đài Loan", "Đức", "Úc", "Canada"],
+  kysu: ["Nhật Bản", "Hàn Quốc", "Đức", "Mỹ", "Canada", "Úc"]
+};
+
+function renderCountries() {
+  // Xuất khẩu lao động
+  const xlldContainer = document.getElementById('xlld-countries');
+  xlldContainer.innerHTML = countriesByProgram.xlld.map(country => `
+    <label class="flex items-center gap-2 cursor-pointer">
+      <input type="checkbox" class="accent-purple-600"> ${country}
+    </label>
+  `).join('');
+
+  // Du học
+  const duhocContainer = document.getElementById('duhoc-countries');
+  duhocContainer.innerHTML = countriesByProgram.duhoc.map(country => `
+    <label class="flex items-center gap-2 cursor-pointer">
+      <input type="checkbox" class="accent-purple-600"> ${country}
+    </label>
+  `).join('');
+
+  // Kỹ sư
+  const kysuContainer = document.getElementById('kysu-countries');
+  kysuContainer.innerHTML = countriesByProgram.kysu.map(country => `
+    <label class="flex items-center gap-2 cursor-pointer">
+      <input type="checkbox" class="accent-purple-600"> ${country}
+    </label>
+  `).join('');
+}
+
+// Lưu ứng viên
+function saveCandidate() {
+  alert("✅ Ứng viên đã được lưu thành công!");
+}
+
+// Lưu và nhập tiếp
+function saveAndContinue() {
+  alert("✅ Ứng viên đã được lưu và sẵn sàng nhập mới!");
+}
+
+let relatives = [];
+function openRelativePopup() {
+  document.getElementById('relativePopup').classList.remove('hidden');
+  document.getElementById('relativePopup').classList.add('flex');
+}
+
+function closeRelativePopup() {
+  document.getElementById('relativePopup').classList.add('hidden');
+  document.getElementById('relativePopup').classList.remove('flex');
+}
+
+function saveRelative() {
+  const name = document.getElementById('relName').value;
+  const phone = document.getElementById('relPhone').value;
+  const relation = document.getElementById('relRelation').value;
+
+  if (!name) return alert("Nhập tên người thân!");
+
+  relatives.push({ name, phone, relation });
+
+  renderRelatives();
+  closeRelativePopup();
+
+  // reset
+  document.getElementById('relName').value = '';
+  document.getElementById('relPhone').value = '';
+  document.getElementById('relRelation').value = '';
+}
+
+function renderRelatives() {
+  const container = document.getElementById('relativeList');
+
+  if (relatives.length === 0) {
+    container.innerHTML = `<p class="text-gray-400">Chưa có thông tin</p>`;
+    return;
+  }
+
+  container.innerHTML = relatives.map(r => `
+    <div class="p-3 border rounded-xl flex justify-between">
+      <div>
+        <div class="font-medium">${r.name} (${r.relation})</div>
+        <div class="text-gray-500">${r.phone}</div>
+      </div>
+    </div>
+  `).join('');
+}
+// Khởi tạo
+window.onload = renderCountries;
+</script>
+
+</body>
+</html>

@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quản lý quốc gia - KIYOKAWA CRM</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+</head>
+<body class="bg-gray-50 p-8">
+
+<div class="max-w-screen-2xl mx-auto">
+
+  <div class="flex justify-between items-center mb-8">
+    <div>
+      <h1 class="text-3xl font-semibold">Quản lý quốc gia</h1>
+      <p class="text-gray-500">Quản lý danh sách quốc gia theo từng chương trình tuyển dụng</p>
+    </div>
+    <button onclick="window.location.href='add_country.html'" 
+            class="bg-purple-600 text-white px-6 py-3 rounded-2xl flex items-center gap-2 hover:bg-purple-700 transition">
+      <i class="fas fa-plus"></i>
+      <span>Thêm quốc gia</span>
+    </button>
+  </div>
+
+  <!-- Tabs chương trình -->
+  <div class="flex border-b mb-8 overflow-x-auto">
+    <button onclick="switchTab(0)" id="tab0" 
+            class="tab-button active px-8 py-4 font-medium border-b-2 border-purple-600 text-purple-600 whitespace-nowrap">
+      Xuất khẩu lao động
+    </button>
+    <button onclick="switchTab(1)" id="tab1" 
+            class="tab-button px-8 py-4 font-medium text-gray-600 hover:text-gray-800 whitespace-nowrap">
+      Du học hệ vừa học vừa làm
+    </button>
+    <button onclick="switchTab(2)" id="tab2" 
+            class="tab-button px-8 py-4 font-medium text-gray-600 hover:text-gray-800 whitespace-nowrap">
+      Chương trình Kỹ sư
+    </button>
+  </div>
+
+  <!-- Bảng danh sách quốc gia -->
+  <div class="bg-white rounded-3xl shadow-sm overflow-hidden">
+    <table class="w-full" id="countryTable">
+      <thead class="bg-gray-50">
+        <tr>
+          <th class="px-8 py-5 text-left font-medium text-gray-700 w-16">STT</th>
+          <th class="px-8 py-5 text-left font-medium text-gray-700">Tên quốc gia</th>
+          <th class="px-8 py-5 text-left font-medium text-gray-700">Viết tắt</th>
+          <th class="px-8 py-5 text-center font-medium text-gray-700">Trạng thái</th>
+          <th class="px-8 py-5 text-center font-medium text-gray-700">Thao tác</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y text-sm" id="tableBody">
+        <!-- JavaScript sẽ render -->
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!--XÓA-->
+<div id="deleteModal" class="hidden fixed inset-0 bg-black/40 flex items-center justify-center">
+
+  <div class="bg-white w-[420px] rounded-3xl p-6 text-center">
+
+    <i class="fas fa-triangle-exclamation text-red-500 text-3xl mb-3"></i>
+
+    <h2 class="font-semibold text-lg">Xác nhận xóa</h2>
+
+    <p class="text-gray-500 mt-2">
+      Bạn có chắc muốn xóa quốc gia ID:
+      <span id="deleteId"></span>?
+    </p>
+
+    <div class="flex gap-3 mt-6">
+      <button onclick="closeModal('deleteModal')" class="flex-1 border rounded-2xl py-3">
+        Hủy
+      </button>
+
+      <button onclick="confirmDelete()" class="flex-1 bg-red-500 text-white rounded-2xl py-3">
+        Xóa
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// Dữ liệu quốc gia theo từng chương trình
+const countriesData = [
+  // 1. Xuất khẩu lao động (12 quốc gia)
+  [
+    { id: 1, name: "Nhật Bản", abbr: "JP, JPN", status: "Hoạt động" },
+    { id: 2, name: "Hàn Quốc", abbr: "KR, KOR", status: "Hoạt động" },
+    { id: 3, name: "Đài Loan", abbr: "TW", status: "Hoạt động" },
+    { id: 4, name: "Singapore", abbr: "SG", status: "Hoạt động" },
+    { id: 5, name: "Malaysia", abbr: "MY", status: "Hoạt động" },
+    { id: 6, name: "Thái Lan", abbr: "TH", status: "Tạm khóa" },
+    { id: 7, name: "Trung Quốc", abbr: "CN", status: "Hoạt động" },
+    { id: 8, name: "Indonesia", abbr: "ID", status: "Hoạt động" },
+    { id: 9, name: "Philippines", abbr: "PH", status: "Hoạt động" },
+    { id: 10, name: "Úc", abbr: "AU", status: "Tạm khóa" },
+    { id: 11, name: "New Zealand", abbr: "NZ", status: "Hoạt động" },
+    { id: 12, name: "Đức", abbr: "DE", status: "Hoạt động" }
+  ],
+  // 2. Du học hệ vừa học vừa làm (8 quốc gia)
+  [
+    { id: 1, name: "Hàn Quốc", abbr: "KR, KOR", status: "Hoạt động" },
+    { id: 2, name: "Nhật Bản", abbr: "JP, JPN", status: "Hoạt động" },
+    { id: 3, name: "Đài Loan", abbr: "TW", status: "Hoạt động" },
+    { id: 4, name: "Singapore", abbr: "SG", status: "Hoạt động" },
+    { id: 5, name: "Úc", abbr: "AU", status: "Tạm khóa" },
+    { id: 6, name: "New Zealand", abbr: "NZ", status: "Hoạt động" },
+    { id: 7, name: "Canada", abbr: "CA", status: "Hoạt động" },
+    { id: 8, name: "Anh", abbr: "GB", status: "Tạm khóa" }
+  ],
+  // 3. Chương trình Kỹ sư (6 quốc gia)
+  [
+    { id: 1, name: "Nhật Bản", abbr: "JP, JPN", status: "Hoạt động" },
+    { id: 2, name: "Đức", abbr: "DE", status: "Hoạt động" },
+    { id: 3, name: "Hàn Quốc", abbr: "KR", status: "Hoạt động" },
+    { id: 4, name: "Singapore", abbr: "SG", status: "Hoạt động" },
+    { id: 5, name: "Úc", abbr: "AU", status: "Tạm khóa" },
+    { id: 6, name: "Canada", abbr: "CA", status: "Hoạt động" }
+  ]
+];
+
+let currentTab = 0;
+let currentCountry = null;
+
+function renderTable(data) {
+  const tbody = document.getElementById('tableBody');
+  tbody.innerHTML = '';
+
+  data.forEach((country, index) => {
+    const row = document.createElement('tr');
+    row.className = "hover:bg-gray-50 transition";
+    row.innerHTML = `
+      <td class="px-8 py-6 text-gray-500">${country.id}</td>
+      <td class="px-8 py-6 font-medium">${country.name}</td>
+      <td class="px-8 py-6">
+        ${country.abbr.split(',').map(a => `
+          <span class="inline-block bg-blue-100 text-blue-700 px-3 py-1 rounded-xl text-xs mr-1 mb-1">${a.trim()}</span>
+        `).join('')}
+      </td>
+      <td class="px-8 py-6 text-center">
+        <span class="px-4 py-1 rounded-2xl text-xs font-medium 
+          ${country.status === 'Hoạt động' ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-600'}">
+          ${country.status}
+        </span>
+      </td>
+      <td class="px-8 py-6 text-center">
+        <button onclick="openAbbrevPage('${country.name}', '${currentTab}')"
+          class="text-blue-600 hover:text-blue-700 mx-2" title="Quản lý viết tắt">
+          <i class="fas fa-tags"></i>
+        </button>
+        <button onclick="editCountry('${country.name}')" class="text-emerald-600 hover:text-emerald-700 mx-2" title="Chỉnh sửa">
+          <i class="fas fa-edit"></i>
+        </button>
+        <button onclick="deleteCountry('${country.name}')" class="text-red-600 hover:text-red-700 mx-2" title="Xóa">
+          <i class="fas fa-trash"></i>
+        </button>
+      </td>
+    `;
+    tbody.appendChild(row);
+  });
+}
+
+function switchTab(tabIndex) {
+  currentTab = tabIndex;
+  
+  // Cập nhật tab active
+  document.querySelectorAll('.tab-button').forEach((btn, i) => {
+    if (i === tabIndex) {
+      btn.classList.add('active', 'border-b-2', 'border-purple-600', 'text-purple-600');
+    } else {
+      btn.classList.remove('active', 'border-b-2', 'border-purple-600', 'text-purple-600');
+    }
+  });
+
+  renderTable(countriesData[tabIndex]);
+}
+
+function openAbbrevPage(countryName, tabIndex) {
+  const programNames = [
+    "Xuất khẩu lao động",
+    "Du học hệ vừa học vừa làm",
+    "Chương trình Kỹ sư"
+  ];
+
+  const program = programNames[tabIndex];
+
+  const country = countriesData[tabIndex].find(c => c.name === countryName);
+
+  // LƯU DATA QUA LOCALSTORAGE
+  localStorage.setItem("selectedCountry", JSON.stringify({
+    name: country.name,
+    program: program,
+    abbrevs: country.abbr.split(",").map(x => x.trim())
+  }));
+
+  window.location.href = "manage_abbrev.html";
+}
+
+function editCountry(name) {
+  const country = countriesData[currentTab].find(c => c.name === name);
+
+  const programNames = [
+    "Xuất khẩu lao động",
+    "Du học hệ vừa học vừa làm",
+    "Chương trình Kỹ sư"
+  ];
+
+  const payload = {
+    name: country.name,
+    abbr: country.abbr.split(",").map(x => x.trim()),
+    program: programNames[currentTab],
+    id: country.id
+  };
+
+  localStorage.setItem("editCountryData", JSON.stringify(payload));
+
+  window.location.href = "edit_country.html";
+}
+function deleteCountry(name) {
+  currentCountry = countriesData[currentTab].find(c => c.name === name);
+
+  document.getElementById('deleteId').innerText = currentCountry.name;
+  document.getElementById('deleteModal').classList.remove('hidden');
+}
+
+function closeModal(id){
+  document.getElementById(id).classList.add('hidden');
+}
+
+function confirmDelete() {
+  closeModal('deleteModal');
+  alert("Đã xóa quốc gia: " + currentCountry.name);
+}
+
+// Khởi tạo
+window.onload = () => {
+  renderTable(countriesData[0]);
+};
+</script>
+
+</body>
+</html>

@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ứng viên chính thức - KIYOKAWA CRM</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+</head>
+
+<body class="bg-gray-50 p-8">
+
+<div class="max-w-screen-2xl mx-auto">
+
+  <!-- HEADER -->
+  <div class="flex justify-between items-center mb-8">
+    <div>
+      <h1 class="text-3xl font-semibold">Ứng viên chính thức</h1>
+      <p class="text-gray-500">Danh sách ứng viên đã chuyển sang hồ sơ chính thức</p>
+    </div>
+
+    <button onclick="alert('Export Excel')" 
+      class="bg-purple-600 text-white px-6 py-3 rounded-2xl flex items-center gap-2 hover:bg-purple-700">
+      <i class="fas fa-file-export"></i>
+      <span>Xuất Excel</span>
+    </button>
+  </div>
+  <!-- STATS -->
+  <div class="grid grid-cols-4 gap-6 mb-8">
+    <div class="bg-white rounded-3xl p-6">
+      <div class="text-4xl font-semibold">568</div>
+      <div class="text-gray-600 mt-1">Tổng hồ sơ</div>
+    </div>
+    <div class="bg-white rounded-3xl p-6">
+      <div class="text-4xl font-semibold text-blue-600">210</div>
+      <div class="text-gray-600 mt-1">Đang xử lý</div>
+    </div>
+    <div class="bg-white rounded-3xl p-6">
+      <div class="text-4xl font-semibold text-emerald-600">198</div>
+      <div class="text-gray-600 mt-1">Đã xuất cảnh</div>
+    </div>
+    <div class="bg-white rounded-3xl p-6">
+      <div class="text-4xl font-semibold text-red-600">4</div>
+      <div class="text-gray-600 mt-1">Ngừng xử lý</div>
+    </div>
+  </div>
+
+  <!-- FILTER -->
+  <div class="bg-white rounded-3xl p-6 mb-8">
+    <div class="flex justify-between mb-4">
+      <h2 class="font-semibold">Bộ lọc</h2>
+      <div class="flex gap-3">
+        <button onclick="applyFilter()" class="px-6 py-2 bg-purple-600 text-white rounded-2xl text-sm">Lọc</button>
+        <button onclick="resetFilter()" class="px-6 py-2 border rounded-2xl text-sm">Xóa</button>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-5 gap-4">
+      <input id="searchName" type="text" placeholder="Họ tên"
+        class="border rounded-2xl px-4 py-3">
+
+      <input id="searchPhone" type="text" placeholder="Số điện thoại"
+        class="border rounded-2xl px-4 py-3">
+
+      <select id="filterStatus" class="border rounded-2xl px-4 py-3">
+        <option value="">Trạng thái</option>
+        <option value="Sơ tuyển">Sơ tuyển</option>
+        <option value="Phỏng vấn">Phỏng vấn</option>
+        <option value="Ký hợp đồng">Ký hợp đồng</option>
+        <option value="Đào tạo">Đào tạo</option>
+        <option value="Ngừng xử lý">Ngừng xử lý</option>
+      </select>
+
+      <select id="filterProgram" class="border rounded-2xl px-4 py-3">
+        <option value="">Chương trình</option>
+        <option value="Xuất khẩu lao động">Xuất khẩu lao động</option>
+        <option value="Du học">Du học</option>
+        <option value="Kỹ sư">Kỹ sư</option>
+      </select>
+
+      <select id="filterCountry" class="border rounded-2xl px-4 py-3">
+        <option value="">Quốc gia</option>
+        <option value="Nhật Bản">Nhật Bản</option>
+        <option value="Hàn Quốc">Hàn Quốc</option>
+        <option value="Đài Loan">Đài Loan</option>
+        <option value="Singapore">Singapore</option>
+        <option value="Malaysia">Malaysia</option>
+        <option value="Thái Lan">Thái Lan</option>
+        <option value="Trung Quốc">Trung Quốc</option>
+        <option value="Indonesia">Indonesia</option>
+        <option value="Philippines">Philippines</option>
+        <option value="Úc">Úc</option>
+        <option value="New Zealand">New Zealand</option>
+        <option value="Đức">Đức</option>
+        <option value="Canada">Canada</option>
+        <option value="Anh">Anh</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- LIST -->
+  <div id="candidateGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+
+</div>
+
+<script>
+
+// DATA 20 ứng viên theo pipeline mới
+const candidates = [
+  {id:1, name:"Nguyễn Văn A", phone:"0911111111", status:"Sơ tuyển", program:"Du học", country:"Nhật Bản"},
+  {id:2, name:"Trần Thị B", phone:"0922222222", status:"Phỏng vấn", program:"Kỹ sư", country:"Hàn Quốc"},
+  {id:3, name:"Lê Văn C", phone:"0933333333", status:"Ký hợp đồng", program:"Xuất khẩu lao động", country:"Nhật Bản"},
+  {id:4, name:"Phạm Thị D", phone:"0944444444", status:"Đào tạo", program:"Du học", country:"Úc"},
+  {id:5, name:"Hoàng Văn E", phone:"0955555555", status:"Ngừng xử lý", program:"Kỹ sư", country:"Đức"},
+  {id:6, name:"Đỗ Thị F", phone:"0966666666", status:"Sơ tuyển", program:"Xuất khẩu lao động", country:"Nhật Bản"},
+  {id:7, name:"Vũ Văn G", phone:"0977777777", status:"Phỏng vấn", program:"Du học", country:"Hàn Quốc"},
+  {id:8, name:"Bùi Thị H", phone:"0988888888", status:"Ký hợp đồng", program:"Kỹ sư", country:"Úc"},
+  {id:9, name:"Ngô Văn I", phone:"0999999999", status:"Đào tạo", program:"Xuất khẩu lao động", country:"Nhật Bản"},
+  {id:10, name:"Dương Thị K", phone:"0901010101", status:"Ngừng xử lý", program:"Du học", country:"Hàn Quốc"},
+  {id:11, name:"Phan Văn L", phone:"0902020202", status:"Sơ tuyển", program:"Kỹ sư", country:"Đức"},
+  {id:12, name:"Trịnh Thị M", phone:"0903030303", status:"Phỏng vấn", program:"Xuất khẩu lao động", country:"Nhật Bản"},
+  {id:13, name:"Mai Văn N", phone:"0904040404", status:"Ký hợp đồng", program:"Du học", country:"Úc"},
+  {id:14, name:"Lý Thị O", phone:"0905050505", status:"Đào tạo", program:"Kỹ sư", country:"Hàn Quốc"},
+  {id:15, name:"Tạ Văn P", phone:"0906060606", status:"Ngừng xử lý", program:"Xuất khẩu lao động", country:"Nhật Bản"},
+  {id:16, name:"Hồ Thị Q", phone:"0907070707", status:"Sơ tuyển", program:"Du học", country:"Đức"},
+  {id:17, name:"Đặng Văn R", phone:"0908080808", status:"Phỏng vấn", program:"Kỹ sư", country:"Úc"},
+  {id:18, name:"Cao Thị S", phone:"0909090909", status:"Ký hợp đồng", program:"Xuất khẩu lao động", country:"Nhật Bản"},
+  {id:19, name:"Lâm Văn T", phone:"0910101010", status:"Đào tạo", program:"Du học", country:"Hàn Quốc"},
+  {id:20, name:"Kiều Thị U", phone:"0911112222", status:"Ngừng xử lý", program:"Kỹ sư", country:"Đức"}
+];
+
+let filtered = [...candidates];
+
+// COLOR STATUS
+function getStatusColor(status) {
+  switch(status) {
+    case "Sơ tuyển": return "bg-blue-100 text-blue-700";
+    case "Phỏng vấn": return "bg-yellow-100 text-yellow-700";
+    case "Ký hợp đồng": return "bg-emerald-100 text-emerald-700";
+    case "Đào tạo": return "bg-purple-100 text-purple-700";
+    case "Ngừng xử lý": return "bg-red-100 text-red-700";
+    default: return "bg-gray-100 text-gray-700";
+  }
+}
+
+// RENDER
+function render(data) {
+  const grid = document.getElementById('candidateGrid');
+  grid.innerHTML = '';
+
+  data.forEach(c => {
+    grid.innerHTML += `
+      <div class="bg-white rounded-3xl p-6 hover:shadow-md transition">
+        <div class="flex justify-between">
+          <div>
+            <h3 class="font-semibold">${c.name}</h3>
+            <p class="text-sm text-gray-500">${c.phone}</p>
+          </div>
+
+          <span class="px-4 py-3 rounded-2xl text-xs font-medium ${getStatusColor(c.status)}">
+            ${c.status}
+          </span>
+        </div>
+
+        <div class="mt-4 text-sm space-y-1">
+          <div>Chương trình: <b>${c.program}</b></div>
+          <div>Quốc gia: <b>${c.country}</b></div>
+        </div>
+
+        <div class="flex gap-2 mt-6">
+          <button class="flex-1 bg-purple-600 text-white py-2 rounded-xl">Chi tiết</button>
+          <button class="flex-1 border py-2 rounded-xl">Sửa</button>
+          <button class="flex-1 bg-red-500 text-white py-2 rounded-xl">Xóa</button>
+        </div>
+      </div>
+    `;
+  });
+}
+
+// FILTER
+function applyFilter() {
+  const name = document.getElementById('searchName').value.toLowerCase();
+  const phone = document.getElementById('searchPhone').value;
+  const status = document.getElementById('filterStatus').value;
+  const program = document.getElementById('filterProgram').value;
+  const country = document.getElementById('filterCountry').value;
+
+  filtered = candidates.filter(c => {
+    return (
+      (!name || c.name.toLowerCase().includes(name)) &&
+      (!phone || c.phone.includes(phone)) &&
+      (!status || c.status === status) &&
+      (!program || c.program === program) &&
+      (!country || c.country === country)
+    );
+  });
+
+  render(filtered);
+}
+
+// RESET
+function resetFilter() {
+  document.getElementById('searchName').value = '';
+  document.getElementById('searchPhone').value = '';
+  document.getElementById('filterStatus').value = '';
+  document.getElementById('filterProgram').value = '';
+  document.getElementById('filterCountry').value = '';
+
+  filtered = [...candidates];
+  render(filtered);
+}
+
+// INIT
+window.onload = () => render(candidates);
+
+</script>
+
+</body>
+</html>

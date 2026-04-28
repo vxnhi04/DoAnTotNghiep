@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quản lý viết tắt - KIYOKAWA CRM</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+</head>
+
+<body class="bg-gray-50 p-8">
+
+<div class="max-w-screen-2xl mx-auto">
+
+  <!-- HEADER -->
+  <div class="mb-8">
+    <div class="flex items-center gap-4">
+      <button onclick="history.back()" class="text-gray-500 hover:text-gray-700 transition-colors">
+        <i class="fas fa-arrow-left text-2xl"></i>
+      </button>
+
+      <h1 class="text-3xl font-semibold">Quản lý viết tắt</h1>
+    </div>
+
+    <p class="text-gray-500 mt-2 ml-12">
+      <span id="programTitle">—</span> → <span id="countryTitle">—</span>
+    </p>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="bg-white rounded-3xl shadow-sm p-8">
+
+    <button onclick="addNewAbbrev()" 
+            class="mb-6 px-6 py-3 bg-purple-600 text-white rounded-2xl flex items-center gap-2 hover:bg-purple-700 transition-colors">
+      <i class="fas fa-plus"></i> 
+      Thêm viết tắt mới
+    </button>
+
+    <div id="abbrevContainer" class="space-y-3"></div>
+
+  </div>
+
+</div>
+
+<script>
+// ================= DATA =================
+let abbrevs = [];
+
+let countryData = null;
+
+
+// PARAMS
+const params = new URLSearchParams(window.location.search);
+
+const countryName = params.get("country") || "—";
+const programName = params.get("program") || "—";
+
+// INIT
+document.addEventListener("DOMContentLoaded", () => {
+  const data = JSON.parse(localStorage.getItem("selectedCountry"));
+
+  if (!data) return;
+
+  countryData = data;
+
+  abbrevs = data.abbrevs || [];
+
+  document.getElementById("countryTitle").innerText = data.name;
+  document.getElementById("programTitle").innerText = data.program;
+
+  renderAbbrevs();
+});
+
+// HEADER
+function renderHeader() {
+  document.getElementById("countryTitle").innerText = countryName;
+  document.getElementById("programTitle").innerText = programName;
+}
+
+// ================= RENDER =================
+function renderAbbrevs() {
+  const container = document.getElementById('abbrevContainer');
+  container.innerHTML = '';
+
+  if (abbrevs.length === 0) {
+    container.innerHTML = `
+      <div class="text-center text-gray-400 py-10">
+        Chưa có viết tắt nào
+      </div>
+    `;
+    return;
+  }
+
+  abbrevs.forEach((abbr, index) => {
+    container.innerHTML += `
+      <div class="flex items-center justify-between bg-gray-50 px-6 py-4 rounded-2xl border">
+
+        <span class="font-medium text-lg">${abbr}</span>
+
+        <div class="flex gap-4">
+          <button onclick="editAbbrev(${index})" class="text-blue-600 hover:text-blue-700 p-2">
+            <i class="fas fa-edit"></i>
+          </button>
+
+          <button onclick="deleteAbbrev(${index})" class="text-red-600 hover:text-red-700 p-2">
+            <i class="fas fa-trash"></i>
+          </button>
+        </div>
+
+      </div>
+    `;
+  });
+}
+
+// ================= ACTIONS =================
+function addNewAbbrev() {
+  const value = prompt("Nhập viết tắt mới:");
+
+  if (!value || !value.trim()) return;
+
+  abbrevs.push(value.trim().toUpperCase());
+  renderAbbrevs();
+}
+
+function editAbbrev(index) {
+  const value = prompt("Chỉnh sửa viết tắt:", abbrevs[index]);
+
+  if (!value || !value.trim()) return;
+
+  abbrevs[index] = value.trim().toUpperCase();
+  renderAbbrevs();
+}
+
+function deleteAbbrev(index) {
+  const confirmDelete = confirm(`Xóa viết tắt "${abbrevs[index]}"?`);
+
+  if (!confirmDelete) return;
+
+  abbrevs.splice(index, 1);
+  renderAbbrevs();
+}
+</script>
+
+</body>
+</html>

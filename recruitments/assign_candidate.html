@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Phân công ứng viên</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+</head>
+
+<body class="bg-gray-50 p-8">
+
+<div class="max-w-6xl mx-auto">
+
+  <!-- HEADER -->
+  <div class="flex items-center gap-4 mb-8">
+    <button onclick="history.back()" class="text-gray-500 hover:text-gray-700 p-2">
+      <i class="fas fa-arrow-left text-3xl"></i>
+    </button>
+    <div>
+      <h1 class="text-3xl font-semibold">Phân công ứng viên</h1>
+      <p class="text-gray-500">Chọn ứng viên và nhân sự phụ trách</p>
+    </div>
+  </div>
+
+  <div class="bg-white rounded-3xl p-8 shadow-sm">
+
+    <!-- FILTER -->
+    <div class="mb-8">
+      <h2 class="font-semibold mb-4">Lọc ứng viên</h2>
+
+      <input id="filterName" type="text" placeholder="Tìm theo tên"
+        class="border rounded-2xl px-4 py-3">
+
+      <input id="filterPhone" type="text" placeholder="Số điện thoại"
+        class="border rounded-2xl px-4 py-3">
+
+      <select id="filterProgram" class="border rounded-2xl px-4 py-3">
+        <option value="">Chương trình</option>
+        <option value="Xuất khẩu lao động">Xuất khẩu lao động</option>
+        <option value="Du học">Du học</option>
+        <option value="Kỹ sư">Kỹ sư</option>
+      </select>
+
+      <button onclick="applyFilter()" 
+        class="bg-purple-600 text-white rounded-2xl px-6 py-3">
+        Lọc
+      </button>
+      <button onclick="resetFilter()" 
+        class="border rounded-2xl px-6 py-3">
+        Xóa
+      </button>
+    </div>
+
+    <!-- CANDIDATES -->
+    <div class="mb-10">
+      <h2 class="font-semibold mb-4">Ứng viên</h2>
+
+      <!-- LIST -->
+      <div id="candidateContainer" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+
+      <!-- PAGINATION -->
+      <div class="flex justify-center mt-6 gap-2" id="pagination"></div>
+    </div>
+
+    <!-- SELECTED -->
+    <div class="mt-10">
+      <h2 class="font-semibold mb-4">
+        Ứng viên đã chọn (<span id="selectedCount">0</span>)
+      </h2>
+
+      <div id="selectedList" class="space-y-3 text-sm text-gray-600">
+        <p class="text-gray-400">Chưa chọn ứng viên</p>
+      </div>
+    </div>
+
+    <!-- STAFF -->
+    <div class="my-10">
+      <h2 class="font-semibold mb-4">Chọn nhân sự phụ trách</h2>
+
+      <select class="w-full border rounded-2xl px-5 py-4 text-lg">
+        <option>Chọn nhân sự</option>
+        <option>Nguyễn Quang Hưng</option>
+        <option>Staff Yen</option>
+        <option>Lê Tuyết Hằng</option>
+        <option>Nhân Viên Trần</option>
+      </select>
+    </div>
+
+    <!-- ACTION -->
+    <div class="flex justify-end gap-4">
+      <button class="px-10 py-4 border rounded-2xl hover:bg-gray-50">
+        Hủy
+      </button>
+      <button class="px-10 py-4 bg-purple-600 text-white rounded-2xl hover:bg-purple-700">
+        Xác nhận phân công
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const programs = ["Xuất khẩu lao động", "Du học", "Kỹ sư"];
+
+const allCandidates = Array.from({ length: 30 }, (_, i) => ({
+  id: i + 1,
+  name: "Ứng viên " + (i + 1),
+  phone: "09" + Math.floor(10000000 + Math.random() * 90000000),
+  program: programs[i % 3]
+})); 
+let filteredCandidates = [...allCandidates];
+let currentPage = 1;
+const perPage = 10;
+let selectedCandidates = [];
+
+
+function applyFilter() {
+  const name = document.getElementById('filterName').value.toLowerCase();
+  const phone = document.getElementById('filterPhone').value;
+  const program = document.getElementById('filterProgram').value;
+
+  filteredCandidates = allCandidates.filter(c => {
+    const matchName = !name || c.name.toLowerCase().includes(name);
+    const matchPhone = !phone || c.phone.includes(phone);
+    const matchProgram = !program || c.program === program;
+
+    return matchName && matchPhone && matchProgram;
+  });
+
+  currentPage = 1; // reset về trang 1
+  renderCandidates();
+}
+
+
+// RENDER
+function renderCandidates() {
+  const container = document.getElementById('candidateContainer');
+  container.innerHTML = '';
+
+  const start = (currentPage - 1) * perPage;
+  const pageData = filteredCandidates.slice(start, start + perPage);
+
+  pageData.forEach(c => {
+    const checked = selectedCandidates.some(s => s.id === c.id);
+
+    const item = document.createElement('div');
+    item.className = "flex items-center justify-between border rounded-2xl p-4 hover:shadow cursor-pointer transition";
+
+    item.innerHTML = `
+      <div>
+        <p class="font-medium">${c.name}</p>
+        <p class="text-sm text-gray-500">${c.phone}</p>
+      </div>
+      <input type="checkbox" ${checked ? 'checked' : ''}
+        class="w-5 h-5 accent-purple-600 pointer-events-none">
+    `;
+
+    item.onclick = () => toggleCandidate(c.id);
+
+    container.appendChild(item);
+  });
+
+  renderPagination();
+}
+
+// TOGGLE
+function toggleCandidate(id) {
+  const exist = selectedCandidates.find(c => c.id === id);
+
+  if (exist) {
+    selectedCandidates = selectedCandidates.filter(c => c.id !== id);
+  } else {
+    const candidate = allCandidates.find(c => c.id === id);
+    selectedCandidates.push(candidate);
+  }
+
+  renderCandidates();
+  renderSelected();
+}
+
+// SELECTED LIST
+function renderSelected() {
+  const container = document.getElementById('selectedList');
+  const count = document.getElementById('selectedCount');
+
+  count.innerText = selectedCandidates.length;
+
+  if (selectedCandidates.length === 0) {
+    container.innerHTML = `<p class="text-gray-400">Chưa chọn ứng viên</p>`;
+    return;
+  }
+
+  container.innerHTML = selectedCandidates.map(c => `
+    <div class="flex justify-between items-center border rounded-xl p-3">
+      <div>
+        <div class="font-medium">${c.name}</div>
+        <div class="text-gray-500">${c.phone}</div>
+      </div>
+      <button onclick="removeCandidate(${c.id})"
+              class="text-red-500 hover:text-red-700">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+  `).join('');
+}
+
+// REMOVE
+function removeCandidate(id) {
+  selectedCandidates = selectedCandidates.filter(c => c.id !== id);
+  renderCandidates();
+  renderSelected();
+}
+
+function resetFilter() {
+  document.getElementById('filterName').value = '';
+  document.getElementById('filterPhone').value = '';
+  document.getElementById('filterProgram').value = '';
+
+  filteredCandidates = [...allCandidates];
+  currentPage = 1;
+  renderCandidates();
+}
+
+// PAGINATION
+function renderPagination() {
+  const totalPages = Math.ceil(filteredCandidates.length / perPage);
+  const container = document.getElementById('pagination');
+  container.innerHTML = '';
+
+  for (let i = 1; i <= totalPages; i++) {
+    const btn = document.createElement('button');
+    btn.innerText = i;
+
+    btn.className = `px-4 py-2 rounded-xl border transition
+      ${i === currentPage 
+        ? 'bg-purple-600 text-white' 
+        : 'bg-white hover:bg-gray-100'}`;
+
+    btn.onclick = () => {
+      currentPage = i;
+      renderCandidates();
+    };
+
+    container.appendChild(btn);
+  }
+}
+
+// INIT
+window.onload = () => {
+  renderCandidates();
+};
+
+
+</script>
+
+</body>
+</html>

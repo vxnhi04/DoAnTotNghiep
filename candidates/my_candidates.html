@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ứng viên của tôi - KIYOKAWA CRM</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+</head>
+
+<body class="bg-gray-50">
+<div class="max-w-screen-2xl mx-auto p-8">
+
+  <!-- Header -->
+  <div class="flex justify-between items-center mb-8">
+    <div>
+      <h1 class="text-3xl font-semibold">Ứng viên của tôi</h1>
+      <p class="text-gray-500">Quản lý và chăm sóc các ứng viên được phân công</p>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="flex gap-2 mb-6">
+    <button id="tabPotential"
+      onclick="switchTab('Tiềm năng')"
+      class="px-5 py-2 rounded-2xl text-sm font-medium bg-purple-600 text-white">
+      Ứng viên tiềm năng
+    </button>
+
+    <button id="tabOfficial"
+      onclick="switchTab('Chính thức')"
+      class="px-5 py-2 rounded-2xl text-sm bg-white border">
+      Ứng viên chính thức
+    </button>
+  </div>
+
+  <!-- 6 Thẻ thống kê -->
+  <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 mb-10">
+    <div class="bg-white rounded-3xl p-6 shadow-sm">
+      <div class="text-sm text-gray-600">Tổng số</div>
+      <div class="text-4xl font-bold text-purple-600 mt-2" id="totalCount">8</div>
+      <div class="text-xs text-gray-500 mt-1">Ứng viên đang chăm sóc</div>
+    </div>
+    <!-- Các thẻ khác giữ nguyên -->
+    <div class="bg-white rounded-3xl p-6 shadow-sm">
+      <div class="text-sm text-gray-600">Mới trong tuần</div>
+      <div class="text-4xl font-bold text-blue-600 mt-2">1</div>
+      <div class="text-xs text-gray-500 mt-1">Mới phân công tuần này</div>
+    </div>
+    <div class="bg-white rounded-3xl p-6 shadow-sm">
+      <div class="text-sm text-gray-600">Lịch hẹn hôm nay</div>
+      <div class="text-4xl font-bold text-emerald-600 mt-2">0</div>
+      <div class="text-xs text-gray-500 mt-1">Có lịch hẹn</div>
+    </div>
+    <div class="bg-white rounded-3xl p-6 shadow-sm">
+      <div class="text-sm text-gray-600">Đã gọi hôm nay</div>
+      <div class="text-4xl font-bold text-cyan-600 mt-2">2</div>
+      <div class="text-xs text-gray-500 mt-1">Đã liên hệ trong ngày</div>
+    </div>
+    <div class="bg-white rounded-3xl p-6 shadow-sm">
+      <div class="text-sm text-gray-600">Cần gọi lại gấp</div>
+      <div class="text-4xl font-bold text-amber-600 mt-2">2</div>
+      <div class="text-xs text-gray-500 mt-1">&gt;7 ngày chưa gọi lại</div>
+    </div>
+    <div class="bg-white rounded-3xl p-6 shadow-sm">
+      <div class="text-sm text-gray-600">Chưa liên hệ</div>
+      <div class="text-4xl font-bold text-red-600 mt-2">1</div>
+      <div class="text-xs text-gray-500 mt-1">Chưa liên hệ lần nào</div>
+    </div>
+  </div>
+
+  <!-- Filter -->
+  <div class="bg-white rounded-3xl p-6 mb-8 shadow-sm">
+    <div class="flex justify-between items-center mb-5">
+      <h2 class="font-semibold text-lg">Bộ lọc tìm kiếm</h2>
+      <div class="flex gap-3">
+        <button onclick="applyFilter()" class="px-6 py-2.5 bg-purple-600 text-white rounded-2xl text-sm">Lọc</button>
+        <button onclick="resetFilter()" class="px-6 py-2.5 border rounded-2xl text-sm">Xóa</button>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <input id="searchName" placeholder="Tên ứng viên" class="border rounded-2xl px-5 py-3">
+      <input id="searchPhone" placeholder="SĐT" class="border rounded-2xl px-5 py-3">
+
+      <select id="filterStatus" class="border rounded-2xl px-5 py-3">
+        <option value="">Trạng thái</option>
+      </select>
+
+      <select id="filterCampaign" class="border rounded-2xl px-5 py-3">
+        <option value="">Đợt tuyển</option>
+        <option>Su 10</option>
+        <option>E143</option>
+        <option>F320</option>
+        <option>VBHQ</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- List -->
+  <div id="candidateGrid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+  
+  <!-- Pagination -->
+  <div id="pagination" class="flex justify-center mt-8 gap-2"></div>
+
+  
+</div>
+
+<!-- OVERLAY -->
+<div id="assignOverlay" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+
+  <!-- POPUP -->
+  <div class="modal bg-white rounded-3xl shadow-2xl w-full max-w-lg mx-4 overflow-hidden">
+
+    <!-- Header -->
+    <div class="px-8 py-6 border-b flex items-center justify-between bg-gray-50">
+      <div>
+        <h2 class="text-2xl font-semibold">Phân công lại ứng viên</h2>
+        <p class="text-sm text-gray-500 mt-1">Thay đổi nhân viên phụ trách</p>
+      </div>
+      <button onclick="closeAssign()" 
+              class="text-gray-400 hover:text-gray-600 text-3xl leading-none">×</button>
+    </div>
+
+    <!-- Body -->
+    <div class="p-8 space-y-6">
+
+      <!-- dynamic -->
+      <div id="assignCandidateBox"></div>
+
+      <!-- Nhân viên hiện tại -->
+      <div>
+        <label class="block text-sm font-medium text-gray-600 mb-2">Nhân viên hiện tại</label>
+        <div class="flex items-center gap-4 bg-gray-100 px-6 py-5 rounded-2xl">
+          <div class="w-10 h-10 bg-purple-100 text-purple-700 rounded-2xl flex items-center justify-center font-semibold text-lg">
+            QT
+          </div>
+          <div>
+            <div class="font-medium">Quản Trị Viên</div>
+            <div class="text-xs text-gray-500">Hiện đang phụ trách</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Select -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-3">
+          Phân công lại cho nhân viên <span class="text-red-500">*</span>
+        </label>
+        <select id="newStaffSelect" class="w-full border rounded-2xl px-5 py-4">
+          <option value="">-- Chọn nhân viên --</option>
+          <option>Nguyễn Quang Hưng</option>
+          <option>Lê Tuyết Hằng</option>
+          <option>Trần Thị Mai</option>
+          <option>Phạm Minh Quân</option>
+        </select>
+      </div>
+
+      <!-- Reason -->
+      <textarea id="reason" rows="3" 
+        class="w-full border rounded-2xl px-5 py-4"
+        placeholder="Lý do..."></textarea>
+
+    </div>
+
+    <!-- Footer -->
+    <div class="px-8 py-6 border-t bg-gray-50 flex justify-end gap-4">
+      <button onclick="closeAssign()" class="px-6 py-3 border rounded-2xl">
+        Hủy
+      </button>
+      <button onclick="confirmReassign()" id="confirmBtn"
+        class="px-6 py-3 bg-purple-600 text-white rounded-2xl">
+        Xác nhận
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// DATA
+const candidates = [
+  { id: 1, name: "Nguyễn Thị Lan Anh", phone: "0987 654 321",type: "Tiềm năng", status: "Chưa liên hệ", campaign: "Su 10", program: "Xuất khẩu lao động", country: "Nhật Bản" },
+  { id: 2, name: "Trần Văn Hải", phone: "0912 345 678", type: "Tiềm năng", status: "Cần liên hệ lại", campaign: "E143", program: "Du học", country: "Hàn Quốc" },
+  { id: 3, name: "Lê Thị Ngọc Mai", phone: "0978 123 456", type: "Tiềm năng", status: "Cần liên hệ lại", campaign: "F320", program: "Kỹ sư", country: "Đài Loan" },
+  { id: 4, name: "Phạm Minh Quân", phone: "0934 567 890", type: "Tiềm năng", status: "Đồng ý", campaign: "Su 10", program: "Xuất khẩu lao động", country: "Nhật Bản" },
+  { id: 5, name: "Đỗ Thị Tuyết Ban", phone: "0967 890 123", type: "Tiềm năng",status: "Từ chối", campaign: "VBHQ", program: "Du học", country: "Hàn Quốc" },
+  { id: 6, name: "Nguyễn Văn Tuấn", phone: "0901 234 567", type: "Tiềm năng", status: "Chưa liên hệ", campaign: "E143", program: "Xuất khẩu lao động", country: "Nhật Bản" },
+  { id: 7, name: "Trần Thị Bích Ngọc", phone: "0932 456 789", type: "Tiềm năng", status: "Đồng ý", campaign: "Su 10", program: "Du học", country: "Hàn Quốc" },
+  { id: 8, name: "Lê Văn Hoàng", phone: "0977 888 999", type: "Tiềm năng", status: "Cần liên hệ lại", campaign: "F320", program: "Kỹ sư", country: "Đài Loan" },
+  { id: 9, name: "Phạm Thị Mỹ Linh", phone: "0988 222 333", type: "Chính thức", status: "Sơ tuyển", campaign: "VBHQ", program: "Du học", country: "Hàn Quốc" },
+  { id: 10, name: "Hoàng Minh Đức", phone: "0911 777 666", type: "Chính thức", status: "Phỏng vấn", campaign: "Su 10", program: "Xuất khẩu lao động", country: "Nhật Bản" },
+  { id: 11, name: "Đặng Quốc Bảo", phone: "0966 555 444", type: "Chính thức", status: "Đào tạo", campaign: "F320", program: "Kỹ sư", country: "Đài Loan" }
+];
+
+let currentPage = 1;
+const perPage = 6;
+let currentTab = "Tiềm năng";
+let filteredData = [];
+
+// STATUS MAP
+const statusMap = {
+  "Tiềm năng": ["Chưa liên hệ","Cần liên hệ lại","Đồng ý","Từ chối"],
+  "Chính thức": ["Sơ tuyển","Phỏng vấn","Ký hợp đồng","Đào tạo","Hoàn tất", "Ngừng xử lý"]
+};
+
+
+// STYLE
+function getTypeClass(t){
+  return t==="Tiềm năng"?"bg-purple-100 text-purple-700":"bg-blue-100 text-blue-700";
+}
+function getStatusClass(c) {
+  if (c.type === "Tiềm năng") {
+    switch (c.status) {
+      case "Chưa liên hệ":
+        return "bg-red-100 text-red-700";
+
+      case "Cần liên hệ lại":
+        return "bg-amber-100 text-amber-700";
+
+      case "Đồng ý":
+        return "bg-blue-100 text-blue-700";
+
+      case "Từ chối":
+        return "bg-gray-200 text-gray-600";
+
+      default:
+        return "bg-gray-100 text-gray-500"; // fallback
+    }
+  }
+
+  if (c.type === "Chính thức") {
+    switch (c.status) {
+      case "Sơ tuyển":
+        return "bg-indigo-100 text-indigo-700";
+
+      case "Phỏng vấn":
+        return "bg-cyan-100 text-cyan-700";
+
+      case "Ký hợp đồng":
+        return "bg-emerald-100 text-emerald-700";
+
+      case "Đào tạo":
+        return "bg-orange-100 text-orange-700";
+
+      case "Hoàn tất":
+        return "bg-green-200 text-green-800";
+      case "Ngừng xử lý":
+        return "bg-gray-200 text-green-800";
+      default:
+        return "bg-gray-100 text-gray-500"; // fallback
+    }
+  }
+
+  // fallback cuối cùng (tránh crash)
+  return "bg-gray-100 text-gray-500";
+}
+
+// TAB
+function switchTab(type){
+  currentTab = type;
+  currentPage = 1;
+
+  tabPotential.className = type==="Tiềm năng"
+    ?"px-5 py-2 rounded-2xl bg-purple-600 text-white"
+    :"px-5 py-2 rounded-2xl bg-white border";
+
+  tabOfficial.className = type==="Chính thức"
+    ?"px-5 py-2 rounded-2xl bg-purple-600 text-white"
+    :"px-5 py-2 rounded-2xl bg-white border";
+
+  updateStatus();
+  applyFilter();
+}
+
+// UPDATE STATUS
+function updateStatus(){
+  filterStatus.innerHTML = '<option value="">Trạng thái</option>';
+  statusMap[currentTab].forEach(s=>{
+    filterStatus.innerHTML += `<option>${s}</option>`;
+  });
+}
+
+// RENDER
+function render(data){
+  const grid = document.getElementById("candidateGrid");
+  grid.innerHTML = "";
+
+  filteredData = data;
+
+  const start = (currentPage-1)*perPage;
+  const list = data.slice(start,start+perPage);
+
+  list.forEach(c=>{
+  grid.innerHTML += `
+    <div onclick="goDetail(${c.id})"
+        class="bg-white p-6 rounded-3xl shadow-sm cursor-pointer hover:shadow-md transition relative">
+
+      <div class="flex justify-between items-start">
+
+        <div>
+          <h3 class="font-semibold text-lg">${c.name}</h3>
+          <p class="text-sm text-gray-500">${c.phone}</p>
+        </div>
+
+        <div class="flex items-center gap-2">
+
+          <!-- STATUS -->
+          <span class="px-3 py-3 text-xs font-medium leading-none rounded-lg ${getStatusClass(c)}">
+            ${c.status}
+          </span>
+
+          <!-- ⚙️ ICON -->
+          <button 
+            onclick="openAssign(event, ${c.id})"
+            class="absolute bottom-4 right-4 w-9 h-9 flex items-center justify-center 
+                  rounded-xl bg-gray-50 hover:bg-gray-100 shadow-sm">
+            <i class="fas fa-cog text-gray-600"></i>
+          </button>
+          </button>
+
+        </div>
+      </div>
+
+      <div class="mt-3">
+        <span class="px-2.5 py-[2px] text-xs font-medium rounded-lg ${getTypeClass(c.type)}">
+          ${c.type}
+        </span>
+      </div>
+
+      <div class="mt-4 text-sm">
+        <div>Chương trình: <b>${c.program}</b></div>
+        <div>Quốc gia: <b>${c.country}</b></div>
+        <div>Đợt: <b>${c.campaign}</b></div>
+      </div>
+
+    </div>
+  `;
+});
+
+  renderPagination();
+}
+function goDetail(id) {
+  window.location.href = `candi_detail.html?id=${id}`;
+}
+// PAGINATION
+function renderPagination(){
+  const total = Math.ceil(filteredData.length/perPage);
+  pagination.innerHTML = "";
+
+  for(let i=1;i<=total;i++){
+    pagination.innerHTML += `
+      <button onclick="goPage(${i})"
+        class="px-4 py-2 rounded-xl ${i===currentPage?'bg-purple-600 text-white':'border'}">
+        ${i}
+      </button>
+    `;
+  }
+}
+
+function goPage(p){
+  currentPage = p;
+  render(filteredData);
+}
+
+// FILTER
+function applyFilter(){
+  const name = searchName.value.toLowerCase();
+  const phone = searchPhone.value;
+  const status = filterStatus.value;
+  const campaign = filterCampaign.value;
+
+  const result = candidates.filter(c =>
+    c.type === currentTab &&
+    (!name || c.name.toLowerCase().includes(name)) &&
+    (!phone || c.phone.includes(phone)) &&
+    (!status || c.status === status) &&
+    (!campaign || c.campaign === campaign)
+  );
+
+  render(result);
+}
+
+function resetFilter(){
+  searchName.value = '';
+  searchPhone.value = '';
+  filterStatus.value = '';
+  filterCampaign.value = '';
+  applyFilter();
+}
+
+function openAssign(e, id) {
+  e.stopPropagation();
+
+  const c = candidates.find(x => x.id === id);
+
+  // render thông tin ứng viên
+  document.getElementById("assignCandidateBox").innerHTML = `
+    <div class="bg-gray-50 rounded-2xl p-5 flex items-center gap-4">
+      <div class="w-14 h-14 bg-purple-500 text-white rounded-2xl flex items-center justify-center text-xl font-bold">
+        ${c.name.charAt(0)}
+      </div>
+      <div>
+        <div class="font-semibold">${c.name}</div>
+        <div class="text-sm text-gray-500">${c.phone}</div>
+      </div>
+    </div>
+  `;
+
+  // mở popup
+  document.getElementById("assignOverlay").classList.remove("hidden");
+}
+
+function closeAssign() {
+  document.getElementById("assignOverlay").classList.add("hidden");
+}
+
+function confirmReassign() {
+  const staff = document.getElementById("newStaffSelect").value;
+
+  if (!staff) {
+    alert("Vui lòng chọn nhân viên!");
+    return;
+  }
+
+  alert("Phân công thành công cho: " + staff);
+
+  closeAssign();
+}
+
+// INIT
+window.onload = ()=>{
+  updateStatus();
+  applyFilter();
+};
+</script>
+
+</body>
+</html>

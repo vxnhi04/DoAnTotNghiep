@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KIYOKAWA CRM - Admin</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+  <style>
+    .nav-link {
+      transition: all 0.3s ease;
+    }
+    .nav-link:hover {
+      background-color: #f3e8ff;
+    }
+    .nav-link.active {
+      background-color: #7e22ce;
+      color: white;
+    }
+    .submenu {
+      display: none;
+    }
+    .submenu.active {
+      display: block;
+    }
+    .content-frame {
+      display: none;
+    }
+    .content-frame.active {
+      display: block;
+    }
+  </style>
+</head>
+<body class="bg-gray-50 h-screen overflow-hidden flex">
+
+  <!-- Sidebar -->
+  <div class="w-72 bg-white border-r border-gray-200 flex flex-col h-full">
+
+    <!-- Header -->
+    <div class="p-5 border-b flex items-center gap-3">
+      <div class="w-10 h-10 bg-purple-600 rounded-2xl flex items-center justify-center text-white font-bold text-3xl">K</div>
+      <h1 class="font-bold text-2xl">KIYOKAWA CRM</h1>
+    </div>
+
+    <!-- Menu -->
+    <div class="flex-1 overflow-y-auto py-4">
+
+      <a href="#" onclick="loadPage('dashboard')" class="nav-link active flex items-center gap-3 px-6 py-3 mx-3 rounded-2xl">
+        <i class="fas fa-tachometer-alt w-5"></i>
+        <span>Bảng điều khiển</span>
+      </a>
+
+      <a href="#" onclick="loadPage('overview')" class="nav-link flex items-center gap-3 px-6 py-3 mx-3 rounded-2xl">
+        <i class="fas fa-chart-line w-5"></i>
+        <span>Tổng quan</span>
+      </a>
+
+      <a href="#" onclick="loadPage('my-candidates')" class="nav-link flex items-center gap-3 px-6 py-3 mx-3 rounded-2xl">
+        <i class="fas fa-users w-5"></i>
+        <span>Ứng viên của tôi</span>
+      </a>
+
+      <a href="#" onclick="loadPage('schedule')" class="nav-link flex items-center gap-3 px-6 py-3 mx-3 rounded-2xl">
+        <i class="fas fa-calendar-alt w-5"></i>
+        <span>Lịch của tôi</span>
+      </a>
+
+      <!-- Tuyển dụng & Ứng viên (có submenu) -->
+      <div class="mx-3">
+        <a href="#" onclick="toggleSubmenu(this)" class="nav-link flex items-center justify-between px-6 py-3 rounded-2xl">
+          <div class="flex items-center gap-3">
+            <i class="fas fa-briefcase w-5"></i>
+            <span>Tuyển dụng & Ứng viên</span>
+          </div>
+          <i class="fas fa-chevron-down text-sm"></i>
+        </a>
+        <div class="submenu ml-8 mt-1 space-y-1">
+          <a href="#" onclick="loadPage('campaigns')" class="nav-link flex items-center gap-3 px-6 py-2.5 text-sm rounded-2xl">
+            <i class="fas fa-list-ul w-4"></i>
+            <span>Danh sách đợt</span>
+          </a>
+          <a href="#" onclick="loadPage('create-campaign')" class="nav-link flex items-center gap-3 px-6 py-2.5 text-sm rounded-2xl">
+            <i class="fas fa-plus w-4"></i>
+            <span>Tạo đợt mới</span>
+          </a>
+          <a href="#" onclick="loadPage('campaign-stats')" class="nav-link flex items-center gap-3 px-6 py-2.5 text-sm rounded-2xl">
+            <i class="fas fa-chart-bar w-4"></i>
+            <span>Thống kê đợt tuyển</span>
+          </a>
+          <a href="#" onclick="loadPage('collect-candidate')" class="nav-link flex items-center gap-3 px-6 py-2.5 text-sm rounded-2xl">
+            <i class="fas fa-user-plus w-4"></i>
+            <span>Thu thập ứng viên</span>
+          </a>
+          <a href="#" onclick="loadPage('potential-candidates')" class="nav-link flex items-center gap-3 px-6 py-2.5 text-sm rounded-2xl">
+            <i class="fas fa-star w-4"></i>
+            <span>Ứng viên tiềm năng</span>
+          </a>
+          <a href="#" onclick="loadPage('official-candidates')" class="nav-link flex items-center gap-3 px-6 py-2.5 text-sm rounded-2xl">
+            <i class="fas fa-user-check w-4"></i>
+            <span>Ứng viên chính thức</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Nhân viên & CTV -->
+      <a href="#" onclick="loadPage('staff')" class="nav-link flex items-center gap-3 px-6 py-3 mx-3 rounded-2xl">
+        <i class="fas fa-users w-5"></i>
+        <span>Nhân viên & CTV</span>
+      </a>
+
+      <a href="#" onclick="loadPage('reports')" class="nav-link flex items-center gap-3 px-6 py-3 mx-3 rounded-2xl">
+        <i class="fas fa-file-alt w-5"></i>
+        <span>Báo cáo</span>
+      </a>
+
+      <a href="#" onclick="loadPage('countries')" class="nav-link flex items-center gap-3 px-6 py-3 mx-3 rounded-2xl">
+        <i class="fas fa-globe w-5"></i>
+        <span>Quản lý quốc gia</span>
+      </a>
+
+      <a href="#" onclick="loadPage('admin')" class="nav-link flex items-center gap-3 px-6 py-3 mx-3 rounded-2xl">
+        <i class="fas fa-user-shield w-5"></i>
+        <span>Quản Trị Viên</span>
+      </a>
+
+    </div>
+
+    <!-- Footer -->
+    <div class="p-5 border-t">
+      <a href="#" class="flex items-center gap-3 text-red-600 hover:text-red-700 px-6 py-3 rounded-2xl">
+        <i class="fas fa-sign-out-alt"></i>
+        <span>Đăng xuất</span>
+      </a>
+      <div class="text-center text-xs text-gray-400 mt-6">
+        Powered by NinePlus
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="flex-1 overflow-auto" id="main-content">
+    <!-- Nội dung các trang sẽ được load vào đây -->
+  </div>
+
+  <script>
+    function loadPage(page) {
+      const content = document.getElementById('main-content');
+      
+      // Reset active
+      document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+
+      // Set active cho link chính
+      const links = document.querySelectorAll('.nav-link');
+      links.forEach(link => {
+        if (link.getAttribute('onclick') && link.getAttribute('onclick').includes(page)) {
+          link.classList.add('active');
+        }
+      });
+
+      let url = '';
+      switch(page) {
+        case 'dashboard': url = 'dashboard.html'; break;
+        case 'overview': url = 'overview.html'; break;
+        case 'my-candidates': url = 'candidates/my_candidates.html'; break;
+        case 'schedule': url = 'schedule/schedule.html'; break;
+        case 'campaigns': url = 'recruitments/campaigns.html'; break;
+        case 'create-campaign': url = 'recruitments/create_campaign.html'; break;
+        case 'campaign-stats': url = 'recruitments/campaign_stats.html'; break;
+        case 'collect-candidate': url = 'recruitments/collect_candidate.html'; break;
+        case 'potential-candidates': url = 'recruitments/potential_candidates.html'; break;
+        case 'staff': url = 'account/staff.html'; break;
+        case 'reports': url = 'reports.html'; break;
+        case 'countries': url = 'countries/countries.html'; break;
+        case 'admin': url = 'admin.html'; break;
+        case 'official-candidates': url = 'recruitments/official_candidates.html'; break;
+        default: url = 'dashboard.html';
+      }
+
+      content.innerHTML = `<iframe src="${url}" class="w-full h-full border-0" frameborder="0"></iframe>`;
+    }
+
+    function toggleSubmenu(el) {
+      const submenu = el.nextElementSibling;
+      submenu.classList.toggle('active');
+      
+      // Rotate icon
+      const icon = el.querySelector('i:last-child');
+      if (icon) icon.classList.toggle('rotate-180');
+    }
+
+    // Load trang mặc định
+    window.onload = () => {
+      loadPage('dashboard');
+    };
+  </script>
+</body>
+</html>

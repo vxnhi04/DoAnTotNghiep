@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ứng viên tiềm năng - KIYOKAWA CRM</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+</head>
+<body class="bg-gray-50 p-8">
+
+  <div class="max-w-screen-2xl mx-auto">
+    <div class="flex justify-between items-center mb-8">
+      <div>
+        <h1 class="text-3xl font-semibold">Ứng viên tiềm năng</h1>
+        <p class="text-gray-500">Quản lý danh sách lead / ứng viên tiềm năng toàn hệ thống</p>
+      </div>
+      <div class="flex gap-3">
+        <button onclick="window.location.href='import_excel.html'"  
+                class="bg-white border border-gray-300 px-5 py-3 rounded-2xl flex items-center gap-2 hover:bg-gray-50">
+          <i class="fas fa-file-import"></i>
+          <span>Import Excel</span>
+        </button>
+        <button onclick="window.location.href='assign_candidate.html'"  
+                class="bg-white border border-gray-300 px-5 py-3 rounded-2xl flex items-center gap-2 hover:bg-gray-50">
+          <i class="fas fa-user-tag"></i>
+          <span>Phân công</span>
+        </button>
+        <button onclick="window.location.href='collect_candidate.html'"
+                class="bg-purple-600 text-white px-6 py-3 rounded-2xl flex items-center gap-2 hover:bg-purple-700">
+          <i class="fas fa-plus"></i>
+          <span>Thêm ứng viên</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Thống kê nhanh -->
+    <div class="grid grid-cols-4 gap-6 mb-8">
+      <div class="bg-white rounded-3xl p-6">
+        <div class="text-4xl font-semibold">1,567</div>
+        <div class="text-gray-600 mt-1">Tổng ứng viên tiềm năng</div>
+      </div>
+      <div class="bg-white rounded-3xl p-6">
+        <div class="text-4xl font-semibold text-blue-600">234</div>
+        <div class="text-gray-600 mt-1">Mới trong tháng</div>
+      </div>
+      <div class="bg-white rounded-3xl p-6">
+        <div class="text-4xl font-semibold text-emerald-600">1,089</div>
+        <div class="text-gray-600 mt-1">Đã phân công</div>
+      </div>
+      <div class="bg-white rounded-3xl p-6">
+        <div class="text-4xl font-semibold text-red-600">478</div>
+        <div class="text-gray-600 mt-1">Chưa phân công</div>
+      </div>
+    </div>
+
+    <!-- Bộ lọc -->
+    <div class="bg-white rounded-3xl p-6 mb-8">
+      <div class="flex justify-between mb-4">
+        <h2 class="font-semibold">Bộ lọc tìm kiếm</h2>
+        <div class="flex gap-3">
+          <button onclick="applyFilter()" class="px-6 py-2 bg-purple-600 text-white rounded-2xl text-sm">Lọc</button>
+          <button onclick="resetFilter()" class="px-6 py-2 border border-gray-300 rounded-2xl text-sm">Xóa</button>
+        </div>
+      </div>
+      <div class="grid grid-cols-5 gap-4">
+        <input type="text" id="searchName" placeholder="Họ tên" 
+               class="border border-gray-300 rounded-2xl px-4 py-3 focus:outline-none focus:border-purple-500">
+        <input type="text" id="searchPhone" placeholder="Số điện thoại" 
+               class="border border-gray-300 rounded-2xl px-4 py-3 focus:outline-none focus:border-purple-500">
+        <select id="filterAssign" class="border border-gray-300 rounded-2xl px-4 py-3 focus:outline-none focus:border-purple-500">
+          <option value="">Trạng thái phân công</option>
+          <option value="Chưa">Chưa phân công</option>
+          <option value="Đã">Đã phân công</option>
+        </select>
+        <select id="filterCampaign" class="border border-gray-300 rounded-2xl px-4 py-3 focus:outline-none focus:border-purple-500">
+          <option value="">Đợt tuyển dụng</option>
+          <option value="Su 10">Su 10</option>
+          <option value="E143">E143</option>
+          <option value="F320">F320</option>
+        </select>
+        <select id="filterProgram" class="border border-gray-300 rounded-2xl px-4 py-3 focus:outline-none focus:border-purple-500">
+          <option value="">Chương trình quan tâm</option>
+          <option value="XL">Xuất khẩu lao động</option>
+          <option value="DH">Du học</option>
+          <option value="KS">Kỹ sư</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Danh sách dạng thẻ - 15 ứng viên -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="candidateGrid">
+      <!-- JavaScript sẽ render 15 thẻ -->
+    </div>
+  </div>
+
+  <!-- POPUP -->
+<div id="candidatePopup" class="fixed inset-0 bg-black/40 hidden items-center justify-center z-50">
+  <div class="bg-white w-[600px] rounded-3xl p-8 relative">
+
+    <!-- CLOSE -->
+    <button onclick="closePopup()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+      <i class="fas fa-times text-xl"></i>
+    </button>
+
+    <!-- TITLE -->
+    <h2 id="popupTitle" class="text-2xl font-semibold mb-6">Chi tiết ứng viên</h2>
+
+    <!-- CONTENT -->
+    <div class="space-y-4 text-sm">
+
+      <div>
+        <label class="text-gray-500">Họ tên</label>
+        <input id="popupName" class="w-full border rounded-xl px-4 py-2 mt-1">
+      </div>
+
+      <div>
+        <label class="text-gray-500">Số điện thoại</label>
+        <input id="popupPhone" class="w-full border rounded-xl px-4 py-2 mt-1">
+      </div>
+
+      <div>
+        <label class="text-gray-500">Chương trình</label>
+        <input id="popupProgram" class="w-full border rounded-xl px-4 py-2 mt-1">
+      </div>
+
+      <div>
+        <label class="text-gray-500">Quốc gia</label>
+        <input id="popupCountry" class="w-full border rounded-xl px-4 py-2 mt-1">
+      </div>
+
+    </div>
+
+    <!-- ACTION -->
+    <div class="flex justify-end gap-3 mt-8">
+      <button onclick="closePopup()" class="px-6 py-2 border rounded-xl">Đóng</button>
+      <button id="saveBtn" onclick="saveEdit()" class="px-6 py-2 bg-purple-600 text-white rounded-xl hidden">
+        Lưu
+      </button>
+      <button id="deleteBtn" onclick="confirmDelete()" class="px-6 py-2 bg-red-600 text-white rounded-xl hidden">
+        Xóa
+      </button>
+    </div>
+
+  </div>
+</div>
+</body>
+</html>
+
+<script>
+// Dữ liệu 15 ứng viên tiềm năng
+const potentialCandidates = [
+  {id:1, name:"Phạm Thị Thu Hà", phone:"0912345678", status:"Chưa phân công", program:"Xuất khẩu lao động", country:"Nhật Bản", date:"25/03/2026"},
+  {id:2, name:"Lê Minh Quân", phone:"0987654321", status:"Đã phân công", program:"Du học", country:"Hàn Quốc", date:"24/03/2026"},
+  {id:3, name:"Nguyễn Thị Lan Anh", phone:"0978123456", status:"Chưa phân công", program:"Kỹ sư", country:"Đài Loan", date:"23/03/2026"},
+  {id:4, name:"Trần Văn Hải", phone:"0934567890", status:"Đã phân công", program:"Xuất khẩu lao động", country:"Nhật Bản", date:"22/03/2026"},
+  {id:5, name:"Đỗ Thị Tuyết Ban", phone:"0967890123", status:"Chưa phân công", program:"Du học", country:"Hàn Quốc", date:"21/03/2026"},
+  {id:6, name:"Hoàng Văn Long", phone:"0901234567", status:"Đã phân công", program:"Kỹ sư", country:"Đức", date:"20/03/2026"},
+  {id:7, name:"Vũ Thị Ngọc Mai", phone:"0987654320", status:"Chưa phân công", program:"Xuất khẩu lao động", country:"Singapore", date:"19/03/2026"},
+  {id:8, name:"Phan Minh Tuấn", phone:"0912345679", status:"Đã phân công", program:"Du học", country:"Úc", date:"18/03/2026"},
+  {id:9, name:"Lý Thị Kim Anh", phone:"0978123450", status:"Chưa phân công", program:"Kỹ sư", country:"Canada", date:"17/03/2026"},
+  {id:10, name:"Bùi Văn Nam", phone:"0934567891", status:"Đã phân công", program:"Xuất khẩu lao động", country:"Nhật Bản", date:"16/03/2026"},
+  {id:11, name:"Dương Thị Hương", phone:"0967890124", status:"Chưa phân công", program:"Du học", country:"Hàn Quốc", date:"15/03/2026"},
+  {id:12, name:"Ngô Minh Đức", phone:"0901234568", status:"Đã phân công", program:"Kỹ sư", country:"Đài Loan", date:"14/03/2026"},
+  {id:13, name:"Trịnh Thị Lan", phone:"0987654322", status:"Chưa phân công", program:"Xuất khẩu lao động", country:"Malaysia", date:"13/03/2026"},
+  {id:14, name:"Võ Văn Khánh", phone:"0912345671", status:"Đã phân công", program:"Du học", country:"Singapore", date:"12/03/2026"},
+  {id:15, name:"Hồ Thị Mỹ Linh", phone:"0978123457", status:"Chưa phân công", program:"Kỹ sư", country:"Úc", date:"11/03/2026"}
+];
+let filteredCandidates = [...potentialCandidates];
+
+function renderCandidates(data) {
+  const grid = document.getElementById('candidateGrid');
+  grid.innerHTML = '';
+
+  data.forEach(c => {
+    const cardHTML = `
+      <div class="bg-white rounded-3xl p-6 hover:shadow-md transition">
+        <div class="flex justify-between items-start">
+          <div>
+            <h3 class="font-semibold">${c.name}</h3>
+            <p class="text-sm text-gray-500">${c.phone}</p>
+          </div>
+          <span class="px-4 py-1 rounded-2xl text-xs font-medium 
+            ${c.status === 'Chưa phân công' ? 'bg-red-100 text-red-700' : 'bg-emerald-100 text-emerald-700'}">
+            ${c.status}
+          </span>
+        </div>
+        
+        <div class="mt-6 text-sm space-y-2">
+          <div class="flex justify-between">
+            <span class="text-gray-500">Chương trình:</span>
+            <span class="font-medium">${c.program}</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-gray-500">Quốc gia:</span>
+            <span class="font-medium">${c.country}</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-gray-500">Ngày tạo:</span>
+            <span>${c.date}</span>
+          </div>
+        </div>
+
+        <div class="flex gap-3 mt-8">
+          <button onclick="openPopup(${c.id}, 'view')" 
+                  class="flex-1 bg-purple-600 text-white py-3 rounded-2xl text-sm font-medium">Chi tiết</button>
+          <button onclick="openPopup(${c.id}, 'edit')" 
+                  class="flex-1 border border-gray-300 py-3 rounded-2xl text-sm font-medium">Sửa</button>
+          <button onclick="openPopup(${c.id}, 'delete')"
+                  class="flex-1 bg-red-500 text-white py-3 rounded-2xl text-sm font-medium hover:bg-red-600">Xóa</button>
+        </div>
+      </div>
+    `;
+    grid.innerHTML += cardHTML;
+  });
+}
+
+function applyFilter() {
+  const name = document.getElementById('searchName').value.toLowerCase();
+  const phone = document.getElementById('searchPhone').value;
+  const assign = document.getElementById('filterAssign').value;
+  const campaign = document.getElementById('filterCampaign').value;
+  const program = document.getElementById('filterProgram').value;
+
+  filteredCandidates = potentialCandidates.filter(c => {
+    const matchName = !name || c.name.toLowerCase().includes(name);
+    const matchPhone = !phone || c.phone.includes(phone);
+
+    const matchAssign =
+      !assign ||
+      (assign === "Chưa" && c.status === "Chưa phân công") ||
+      (assign === "Đã" && c.status === "Đã phân công");
+
+    const matchProgram =
+      !program ||
+      (program === "XL" && c.program === "Xuất khẩu lao động") ||
+      (program === "DH" && c.program === "Du học") ||
+      (program === "KS" && c.program === "Kỹ sư");
+
+    // Campaign đang demo nên cho luôn true (sau này nối backend)
+    const matchCampaign = !campaign || true;
+
+    return matchName && matchPhone && matchAssign && matchProgram && matchCampaign;
+  });
+
+  renderCandidates(filteredCandidates);
+}
+function resetFilter() {
+  document.getElementById('searchName').value = '';
+  document.getElementById('searchPhone').value = '';
+  document.getElementById('filterAssign').value = '';
+  document.getElementById('filterCampaign').value = '';
+  document.getElementById('filterProgram').value = '';
+
+  filteredCandidates = [...potentialCandidates];
+  renderCandidates(filteredCandidates);
+}
+
+// Demo functions
+function viewDetail(id) {
+  alert(`Đang xem chi tiết ứng viên ID: ${id}`);
+}
+
+function editCandidate(id) {
+  alert(`Đang mở form chỉnh sửa ứng viên ID: ${id}`);
+}
+
+// Khởi tạo
+window.onload = () => {
+  renderCandidates(filteredCandidates);
+};
+
+let currentCandidate = null;
+let currentMode = "view";
+
+// MỞ POPUP
+function openPopup(id, mode) {
+  const c = potentialCandidates.find(x => x.id === id);
+  if (!c) return;
+
+  currentCandidate = c;
+  currentMode = mode;
+
+  // fill data
+  document.getElementById('popupName').value = c.name;
+  document.getElementById('popupPhone').value = c.phone;
+  document.getElementById('popupProgram').value = c.program;
+  document.getElementById('popupCountry').value = c.country;
+
+  // UI mode
+  const isView = mode === 'view';
+  const isEdit = mode === 'edit';
+  const isDelete = mode === 'delete';
+
+  document.getElementById('popupTitle').innerText =
+    isView ? "Chi tiết ứng viên" :
+    isEdit ? "Chỉnh sửa ứng viên" :
+    "Xóa ứng viên";
+
+  // disable input nếu view/delete
+  document.querySelectorAll('#candidatePopup input').forEach(i => {
+    i.disabled = !isEdit;
+  });
+
+  // buttons
+  document.getElementById('saveBtn').classList.toggle('hidden', !isEdit);
+  document.getElementById('deleteBtn').classList.toggle('hidden', !isDelete);
+
+  document.getElementById('candidatePopup').classList.remove('hidden');
+  document.getElementById('candidatePopup').classList.add('flex');
+}
+
+// ĐÓNG
+function closePopup() {
+  document.getElementById('candidatePopup').classList.add('hidden');
+}
+
+// SAVE EDIT
+function saveEdit() {
+  if (!currentCandidate) return;
+
+  currentCandidate.name = document.getElementById('popupName').value;
+  currentCandidate.phone = document.getElementById('popupPhone').value;
+  currentCandidate.program = document.getElementById('popupProgram').value;
+  currentCandidate.country = document.getElementById('popupCountry').value;
+
+  closePopup();
+  renderCandidates(filteredCandidates);
+}
+
+// DELETE
+function confirmDelete() {
+  if (!currentCandidate) return;
+
+  const index = potentialCandidates.findIndex(c => c.id === currentCandidate.id);
+  if (index !== -1) {
+    potentialCandidates.splice(index, 1);
+  }
+
+  // update filtered
+  filteredCandidates = filteredCandidates.filter(c => c.id !== currentCandidate.id);
+
+  closePopup();
+  renderCandidates(filteredCandidates);
+}
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thống kê đợt tuyển dụng - KIYOKAWA CRM</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+  
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+  <style>
+    .chart-container {
+      position: relative;
+      height: 380px;
+    }
+  </style>
+</head>
+<body class="bg-gray-50 p-8">
+
+<div class="max-w-screen-2xl mx-auto">
+
+  <!-- Header -->
+  <div class="flex justify-between items-center mb-8">
+    <div>
+      <h1 class="text-3xl font-semibold">Thống kê đợt tuyển dụng</h1>
+      <p class="text-gray-500">Tổng quan hiệu quả tuyển dụng, chuyển đổi và pipeline ứng viên</p>
+    </div>
+    <button onclick="history.back()" 
+            class="flex items-center gap-2 text-gray-600 hover:text-gray-800">
+      <i class="fas fa-arrow-left"></i>
+      <span>Quay lại danh sách</span>
+    </button>
+  </div>
+
+  <!-- Chọn đợt -->
+  <div class="bg-white rounded-3xl p-6 mb-8 flex items-center gap-4">
+    <span class="text-sm font-medium text-gray-600">Chọn đợt tuyển dụng:</span>
+    <select id="campaignSelect" class="border border-gray-300 rounded-2xl px-5 py-3 focus:outline-none focus:border-purple-500">
+      <option value="E143">E143 - Du học Hàn Quốc</option>
+      <option value="Su10" selected>Su 10 - Xuất khẩu lao động Nhật Bản</option>
+      <option value="F320">F320 - Kỹ sư Đức</option>
+    </select>
+  </div>
+
+  <!-- 4 Thẻ thống kê -->
+  <div class="grid grid-cols-4 gap-6 mb-10">
+    <div class="bg-white rounded-3xl p-6">
+      <div class="flex items-center gap-4">
+        <div class="w-12 h-12 bg-blue-100 rounded-2xl flex items-center justify-center text-3xl">👥</div>
+        <div>
+          <div class="text-4xl font-bold">259</div>
+          <div class="text-sm text-gray-600">TỔNG ỨNG VIÊN</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-3xl p-6">
+      <div class="flex items-center gap-4">
+        <div class="w-12 h-12 bg-emerald-100 rounded-2xl flex items-center justify-center text-3xl">📈</div>
+        <div>
+          <div class="text-4xl font-bold text-emerald-600">0.0%</div>
+          <div class="text-sm text-gray-600">TỶ LỆ CHUYỂN ĐỔI TB</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-3xl p-6">
+      <div class="flex items-center gap-4">
+        <div class="w-12 h-12 bg-amber-100 rounded-2xl flex items-center justify-center text-3xl">📋</div>
+        <div>
+          <div class="text-4xl font-bold">0</div>
+          <div class="text-sm text-gray-600">ĐANG TRONG QUY TRÌNH</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-3xl p-6">
+      <div class="flex items-center gap-4">
+        <div class="w-12 h-12 bg-orange-100 rounded-2xl flex items-center justify-center text-3xl">✈️</div>
+        <div>
+          <div class="text-4xl font-bold">0</div>
+          <div class="text-sm text-gray-600">CHUẨN BỊ XUẤT CẢNH</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-2 gap-8">
+    <!-- Hiệu quả kênh tuyển dụng (giữ nguyên) -->
+    <div class="bg-white rounded-3xl p-8">
+      <h3 class="font-semibold mb-6">Hiệu quả kênh tuyển dụng</h3>
+      <div class="space-y-6">
+        <div class="flex items-center gap-5">
+          <div class="w-40 text-sm">CTV nội bộ</div>
+          <div class="flex-1 h-6 bg-gray-100 rounded-full overflow-hidden">
+            <div class="h-full bg-purple-600 rounded-full" style="width: 78%"></div>
+          </div>
+          <div class="w-12 text-right font-medium">0.78</div>
+        </div>
+        <div class="flex items-center gap-5">
+          <div class="w-40 text-sm">Digital Marketing</div>
+          <div class="flex-1 h-6 bg-gray-100 rounded-full overflow-hidden">
+            <div class="h-full bg-purple-600 rounded-full" style="width: 45%"></div>
+          </div>
+          <div class="w-12 text-right font-medium">0.45</div>
+        </div>
+        <div class="flex items-center gap-5">
+          <div class="w-40 text-sm">Đối tác tỉnh</div>
+          <div class="flex-1 h-6 bg-gray-100 rounded-full overflow-hidden">
+            <div class="h-full bg-purple-600 rounded-full" style="width: 32%"></div>
+          </div>
+          <div class="w-12 text-right font-medium">0.32</div>
+        </div>
+        <div class="flex items-center gap-5">
+          <div class="w-40 text-sm">Giới thiệu</div>
+          <div class="flex-1 h-6 bg-gray-100 rounded-full overflow-hidden">
+            <div class="h-full bg-purple-600 rounded-full" style="width: 18%"></div>
+          </div>
+          <div class="w-12 text-right font-medium">0.18</div>
+        </div>
+        <div class="flex items-center gap-5">
+          <div class="w-40 text-sm">Hội thảo tuyển sinh</div>
+          <div class="flex-1 h-6 bg-gray-100 rounded-full overflow-hidden">
+            <div class="h-full bg-purple-600 rounded-full" style="width: 12%"></div>
+          </div>
+          <div class="w-12 text-right font-medium">0.12</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Biểu đồ cột mới: Ứng viên theo quốc gia/chương trình -->
+    <div class="bg-white rounded-3xl p-8">
+      <h3 class="font-semibold mb-6">Ứng viên theo quốc gia</h3>
+      <div class="chart-container">
+        <canvas id="countryBarChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pipeline ứng viên (giữ nguyên) -->
+  <div class="mt-12 bg-white rounded-3xl p-10">
+    <h3 class="font-semibold text-lg mb-8">Pipeline ứng viên</h3>
+    <div class="flex justify-center">
+      <div class="relative w-80 h-80">
+        <svg class="w-full h-full" viewBox="0 0 200 200">
+          <circle cx="100" cy="100" r="80" fill="none" stroke="#e5e7eb" stroke-width="35"/>
+          <circle cx="100" cy="100" r="80" fill="none" stroke="#6366f1" stroke-width="35" 
+                  stroke-dasharray="502" stroke-dashoffset="125" stroke-linecap="round"/>
+        </svg>
+        <div class="absolute inset-0 flex flex-col items-center justify-center">
+          <div class="text-5xl font-bold text-indigo-600">68%</div>
+          <div class="text-sm text-gray-500 mt-1">Hoàn thành pipeline</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Legend -->
+    <div class="flex justify-center gap-8 mt-10 text-sm">
+      <div class="flex items-center gap-2"><span class="w-4 h-4 bg-indigo-500 rounded"></span> Đang tư vấn</div>
+      <div class="flex items-center gap-2"><span class="w-4 h-4 bg-emerald-500 rounded"></span> Đã nộp hồ sơ</div>
+      <div class="flex items-center gap-2"><span class="w-4 h-4 bg-amber-500 rounded"></span> Hoàn thiện giấy tờ</div>
+      <div class="flex items-center gap-2"><span class="w-4 h-4 bg-yellow-500 rounded"></span> Đã dự phỏng vấn</div>
+      <div class="flex items-center gap-2"><span class="w-4 h-4 bg-red-500 rounded"></span> Chuẩn bị xuất cảnh</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// Khởi tạo biểu đồ khi trang load xong
+document.addEventListener('DOMContentLoaded', function () {
+
+  new Chart(document.getElementById('countryBarChart'), {
+    type: 'bar',
+    data: {
+      labels: ['Nhật Bản', 'Hàn Quốc', 'Đức', 'Úc', 'Trung Quốc', 'Nga', 'Canada'],
+      datasets: [{
+        label: 'Số lượng ứng viên',
+        data: [82, 28, 15, 12, 10, 8, 5],   // Dữ liệu tương ứng
+        backgroundColor: [
+          '#7e22ce',   // Nhật Bản - tím đậm
+          '#a855f7',
+          '#c084fc',
+          '#d8b4fe',
+          '#e9d5ff',
+          '#f3e8ff',
+          '#faf5ff'
+        ],
+        borderRadius: 10,
+        barThickness: 50,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: '#4c1d95',
+          titleColor: '#fff',
+          bodyColor: '#fff',
+          cornerRadius: 8
+        }
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          grid: { color: '#e5e7eb' },
+          ticks: { color: '#6b7280' }
+        },
+        x: {
+          grid: { display: false },
+          ticks: { 
+            color: '#6b7280',
+            font: { size: 13 }
+          }
+        }
+      }
+    }
+  });
+});
+</script>
+
+</body>
+</html>
