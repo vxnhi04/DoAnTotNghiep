@@ -1,1 +1,2 @@
 # DoAnTotNghiep
+This project focuses on analyzing and designing a Customer Relationship Management (CRM) system that supports the admission consulting and applicant management process. The project covers requirement analysis, business process modeling, use case analysis, functional specification, database design, and user interface wireframes. The objective is to provide a structured business analysis document that serves as the foundation for system development.
